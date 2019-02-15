@@ -39,9 +39,6 @@
     "pageScripts/defaultSettings.js",
     "pageScripts/main.js",
     "iframe.css",
-    "iframe/main.css",
-    "iframe/main.html",
-    "iframe/main.js",
-    "popup/pane.html"
+    "iframe/index.html"
   ]
 }

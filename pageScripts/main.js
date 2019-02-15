@@ -1,5 +1,3 @@
-console.log('content script loaded');
-
 // log = console.log;
 // console = {
 //   ...console,
@@ -66,6 +64,7 @@ const overrideXMLHttpRequest = () => {
     }
   }
 }
+
 
 window.addEventListener("message", function(event) {
   const data = event.data;

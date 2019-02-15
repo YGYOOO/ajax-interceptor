@@ -1,5 +1,6 @@
 .api-interceptor {
-  transform: translateX(300px);
+  transform: translateX(350px);
+  transition: all .4s;
 }
 .api-interceptor.show {
   transform: translateX(0);

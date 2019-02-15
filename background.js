@@ -38,10 +38,17 @@
 //     types: ["script"]
 // }),
 // ["blocking"]);
-console.log(0)
 chrome.browserAction.onClicked.addListener(function(tab) {
-  console.log(1111)
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
     chrome.tabs.sendMessage(tabs[0].id, "toggle");
   })
+});
+
+// 接收iframe传来的信息，转发给content.js
+chrome.runtime.onMessage.addListener(msg => {
+  if (msg.type === 'ajaxInterceptor') {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+      chrome.tabs.sendMessage(tabs[0].id, msg);
+    })
+  }
 });
