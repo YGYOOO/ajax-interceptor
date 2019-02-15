@@ -1,0 +1,47 @@
+{
+  "name": "Getting Started Example",
+  "version": "1.0",
+  "description": "Build an Extension!",
+  "permissions": [
+    "activeTab",
+    "declarativeContent",
+    "storage",
+    "webNavigation",
+    "tabs",
+    "notifications",
+    "http://*/",
+    "https://*/",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "browser_action": {
+  },
+  "icons": {
+    "16": "images/get_started16.png",
+    "32": "images/get_started32.png",
+    "48": "images/get_started48.png",
+    "128": "images/get_started128.png"
+  },
+  "manifest_version": 2,
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["./content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    "pageScripts/defaultSettings.js",
+    "pageScripts/main.js",
+    "iframe.css",
+    "iframe/main.css",
+    "iframe/main.html",
+    "iframe/main.js",
+    "popup/pane.html"
+  ]
+}
