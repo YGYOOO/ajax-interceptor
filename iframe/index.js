@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom';
 
 import Main from './Main';
 
+const DEFAULT_SETTING = {
+  ajaxInterceptor_switchOn: false,
+  ajaxInterceptor_rules: [],
+}
 
 if (chrome.storage) {
   chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules'], (result) => {
@@ -12,18 +16,18 @@ if (chrome.storage) {
     // if (result.ajaxInterceptor_rules) {
     //   this.set('ajaxInterceptor_rules', result.ajaxInterceptor_rules, false);
     // }
-    window.setting = result;
-  
+    window.setting = {
+      ...DEFAULT_SETTING,
+      ...result,
+    };
+
     ReactDOM.render(
       <Main />,
       document.getElementById('main')
     );
   });
 } else {
-  window.setting = {
-    ajaxInterceptor_switchOn: false,
-    ajaxInterceptor_rules: [],
-  };
+  window.setting = DEFAULT_SETTING;
   // 测试环境
   ReactDOM.render(
     <Main />,

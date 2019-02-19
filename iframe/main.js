@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import 'antd/dist/antd.css';
-import {Switch, Collapse, Input, Button} from 'antd';
+import {Switch, Collapse, Input, Button, Badge} from 'antd';
 const Panel = Collapse.Panel;
 const TextArea = Input.TextArea;
 import './Main.less';
@@ -14,16 +14,51 @@ const adjustHieght = ele => {
 }
 
 export default class Main extends Component {
-  set = (key, value) => {
+  constructor() {
+    super();
+    chrome.runtime.onMessage.addListener(({type, to, url, match}) => {
+      if (type === 'ajaxInterceptor' && to === 'iframe') {
+        const {interceptedRequests} = this.state;
+        if (!interceptedRequests[match]) interceptedRequests[match] = [];
 
+        const exits = interceptedRequests[match].some(obj => {
+          if (obj.url === url) {
+            obj.num++;
+            return true;
+          }
+          return false;
+        });
+        
+        if (!exits) {
+          interceptedRequests[match].push({url, num: 1});
+        }
+        this.setState({interceptedRequests})
+      }
+    });
+  }
+
+  state = {
+    interceptedRequests: {}
+  }
+
+  set = (key, value) => {
     // 发送给background.js
-    chrome.runtime.sendMessage('eflgjndpaafdkcbblljjdiakmcpobilj', {type: 'ajaxInterceptor', key, value});
+    chrome.runtime.sendMessage('eflgjndpaafdkcbblljjdiakmcpobilj', {type: 'ajaxInterceptor', to: 'background', key, value});
     chrome.storage && chrome.storage.local.set({[key]: value});
+  }
+
+  forceUpdateDebouce = () => {
+    clearTimeout(this.forceUpdateTimeout);
+    this.forceUpdateTimeout = setTimeout(() => {
+      this.forceUpdate();
+    }, 1000);
   }
 
   handleMatchChange = (e, i) => {
     window.setting.ajaxInterceptor_rules[i].match = e.target.value;
     this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
+
+    this.forceUpdateDebouce();
   }
 
   handleOverrideTxtChange = (e, i) => {
@@ -41,16 +76,20 @@ export default class Main extends Component {
 
   handleClickRemove = (e, i) => {
     e.stopPropagation();
+    const {interceptedRequests} = this.state;
+    const match = window.setting.ajaxInterceptor_rules[i].match;
+
     window.setting.ajaxInterceptor_rules = [
       ...window.setting.ajaxInterceptor_rules.slice(0, i),
       ...window.setting.ajaxInterceptor_rules.slice(i + 1),
     ];
     this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
-    this.forceUpdate();
+
+    delete interceptedRequests[match];
+    this.setState({interceptedRequests})
   }
 
   render() {
-
     return (
       <div className="main">
         <Switch
@@ -59,11 +98,11 @@ export default class Main extends Component {
             this.set('ajaxInterceptor_switchOn', !window.setting.ajaxInterceptor_switchOn);
           }}
         />
-        {window.setting.ajaxInterceptor_rules.length > 0 ? (
+        {window.setting.ajaxInterceptor_rules && window.setting.ajaxInterceptor_rules.length > 0 ? (
           <Collapse style={{marginTop: '10px'}}>
             {window.setting.ajaxInterceptor_rules.map(({match, overrideTxt}, i) => (
               <Panel
-                key={i}
+                key={match}
                 header={
                   <div className="panel-header">
                     <Input
@@ -78,21 +117,44 @@ export default class Main extends Component {
                       shape="circle" 
                       icon="minus"
                       onClick={e => this.handleClickRemove(e, i)}
-                      style={{marginLeft: '8px'}}
+                      style={{marginLeft: '3.5%'}}
                     />
                   </div>
                 }
               >
+                <div>
+                  Replace With:
+                </div>
                 <textarea
                   className="overrideTxt"
+                  placeholder="replace with"
                   ref={ref => {
-                    console.log(1)
-                    adjustHieght(ref);
+                    ref && adjustHieght(ref);
                   }}
                   style={{resize: 'none'}}
                   defaultValue={overrideTxt}
                   onChange={e => this.handleOverrideTxtChange(e, i)}
                 />
+                <div>
+                  Intercepted Requests:
+                </div>
+                <div className="intercepted-requests">
+                  {this.state.interceptedRequests[match] && this.state.interceptedRequests[match].map(({url, num}) => (
+                    <div key={url}>
+                      <Badge
+                        count={num}
+                        style={{
+                          backgroundColor: '#fff',
+                          color: '#999',
+                          boxShadow: '0 0 0 1px #d9d9d9 inset',
+                          marginTop: '-3px',
+                          marginRight: '4px'
+                        }}
+                      />
+                      <span className="url">{url}</span>
+                    </div>
+                  ))}
+                </div>
               </Panel>
             ))}
           </Collapse> 
