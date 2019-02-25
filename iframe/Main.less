@@ -6,6 +6,21 @@
   height: 100%;
   background: white;
 }
+.settingBody {
+  transition: all .5s;
+  padding-top: 10px;
+}
+.settingBody-hidden {
+  transform: translateY(calc(-100% + 41px));
+}
+.collapse {
+  transition: all .6s;
+  margin-bottom: 10px;
+}
+.collapse-hidden {
+  transform: translateY(-100px);
+  opacity: 0;
+}
 .replace-with {
   margin-bottom: 6px;
   text-align: left;
@@ -63,8 +78,13 @@
 .url {
   vertical-align: top;
 }
-
-
 .panel-header {
   text-align: left;
+}
+.btn-add {
+  transition: all .5s;
+  transition-delay: .1s;
+}
+.btn-add-hidden {
+  transform: rotate(-135deg);
 }

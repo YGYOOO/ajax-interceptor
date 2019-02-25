@@ -56,6 +56,13 @@ export default class Main extends Component {
     }, 1000);
   }
 
+  handleSwitchChange = () => {
+    window.setting.ajaxInterceptor_switchOn = !window.setting.ajaxInterceptor_switchOn;
+    this.set('ajaxInterceptor_switchOn', window.setting.ajaxInterceptor_switchOn);
+
+    this.forceUpdate();
+  }
+
   handleMatchChange = (e, i) => {
     window.setting.ajaxInterceptor_rules[i].match = e.target.value;
     this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
@@ -95,79 +102,82 @@ export default class Main extends Component {
     return (
       <div className="main">
         <Switch
+          style={{zIndex: 10}}
           defaultChecked={window.setting.ajaxInterceptor_switchOn}
-          onChange={() => {
-            this.set('ajaxInterceptor_switchOn', !window.setting.ajaxInterceptor_switchOn);
-          }}
+          onChange={this.handleSwitchChange}
         />
-        {window.setting.ajaxInterceptor_rules && window.setting.ajaxInterceptor_rules.length > 0 ? (
-          <Collapse style={{marginTop: '10px'}}>
-            {window.setting.ajaxInterceptor_rules.map(({match, overrideTxt}, i) => (
-              <Panel
-                key={match}
-                header={
-                  <div className="panel-header">
-                    <Input
-                      placeholder="regular expression"
-                      style={{width: '79%'}}
-                      defaultValue={match}
-                      onClick={e => e.stopPropagation()}
-                      onChange={e => this.handleMatchChange(e, i)}
-                    />
-                    <Button
-                      type="primary"
-                      shape="circle" 
-                      icon="minus"
-                      onClick={e => this.handleClickRemove(e, i)}
-                      style={{marginLeft: '3.5%'}}
-                    />
-                  </div>
-                }
-              >
-                <div className="replace-with">
-                  Replace With:
-                </div>
-                <textarea
-                  className="overrideTxt"
-                  placeholder="replace with"
-                  ref={ref => {
-                    ref && adjustHieght(ref);
-                  }}
-                  style={{resize: 'none'}}
-                  defaultValue={overrideTxt}
-                  onChange={e => this.handleOverrideTxtChange(e, i)}
-                />
-                <div className="intercepted-requests">
-                  Intercepted Requests:
-                </div>
-                <div className="intercepted">
-                  {this.state.interceptedRequests[match] && this.state.interceptedRequests[match].map(({url, num}) => (
-                    <Tooltip placement="top" title={url} key={url}>
-                      <Badge
-                        count={num}
-                        style={{
-                          backgroundColor: '#fff',
-                          color: '#999',
-                          boxShadow: '0 0 0 1px #d9d9d9 inset',
-                          marginTop: '-3px',
-                          marginRight: '4px'
-                        }}
+        <div className={window.setting.ajaxInterceptor_switchOn ? 'settingBody' : 'settingBody settingBody-hidden'}>
+          {window.setting.ajaxInterceptor_rules && window.setting.ajaxInterceptor_rules.length > 0 ? (
+            <Collapse className={window.setting.ajaxInterceptor_switchOn ? 'collapse' : 'collapse collapse-hidden'}>
+              {window.setting.ajaxInterceptor_rules.map(({match, overrideTxt}, i) => (
+                <Panel
+                  key={i}
+                  header={
+                    <div className="panel-header">
+                      <Input
+                        placeholder="regular expression"
+                        style={{width: '79%'}}
+                        defaultValue={match}
+                        onClick={e => e.stopPropagation()}
+                        onChange={e => this.handleMatchChange(e, i)}
                       />
-                      <span className="url">{url}</span>
-                    </Tooltip>
-                  ))}
-                </div>
-              </Panel>
-            ))}
-          </Collapse> 
-        ): <div />}
-        <Button
-          style={{marginTop: '10px'}}
-          type="primary"
-          shape="circle" 
-          icon="plus"
-          onClick={this.handleClickAdd}
-        />
+                      <Button
+                        type="primary"
+                        shape="circle" 
+                        icon="minus"
+                        onClick={e => this.handleClickRemove(e, i)}
+                        style={{marginLeft: '4.5%'}}
+                      />
+                    </div>
+                  }
+                >
+                  <div className="replace-with">
+                    Replace With:
+                  </div>
+                  <textarea
+                    className="overrideTxt"
+                    placeholder="replace with"
+                    ref={ref => {
+                      ref && adjustHieght(ref);
+                    }}
+                    style={{resize: 'none'}}
+                    defaultValue={overrideTxt}
+                    onChange={e => this.handleOverrideTxtChange(e, i)}
+                  />
+                  <div className="intercepted-requests">
+                    Intercepted Requests:
+                  </div>
+                  <div className="intercepted">
+                    {this.state.interceptedRequests[match] && this.state.interceptedRequests[match].map(({url, num}) => (
+                      <Tooltip placement="top" title={url} key={url}>
+                        <Badge
+                          count={num}
+                          style={{
+                            backgroundColor: '#fff',
+                            color: '#999',
+                            boxShadow: '0 0 0 1px #d9d9d9 inset',
+                            marginTop: '-3px',
+                            marginRight: '4px'
+                          }}
+                        />
+                        <span className="url">{url}</span>
+                      </Tooltip>
+                    ))}
+                  </div>
+                </Panel>
+              ))}
+            </Collapse> 
+          ): <div />}
+          <div className={window.setting.ajaxInterceptor_switchOn ? 'btn-add' : 'btn-add btn-add-hidden'}>
+            <Button
+              type="primary"
+              shape="circle" 
+              icon="plus"
+              onClick={this.handleClickAdd}
+              disabled={!window.setting.ajaxInterceptor_switchOn}
+            />
+          </div>
+        </div>
       </div>
     );
   }

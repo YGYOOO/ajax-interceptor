@@ -16,7 +16,7 @@ document.documentElement.appendChild(script);
 
 script.addEventListener('load', () => {
   chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules'], (result) => {
-    if (result.ajaxInterceptor_switchOn) {
+    if (result.hasOwnProperty('ajaxInterceptor_switchOn')) {
       postMessage({type: 'ajaxInterceptor', to: 'pageScript', key: 'ajaxInterceptor_switchOn', value: result.ajaxInterceptor_switchOn});
     }
     if (result.ajaxInterceptor_rules) {

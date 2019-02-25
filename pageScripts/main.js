@@ -26,7 +26,7 @@ const myXHR = function() {
             // 请求成功
             if (settings.ajaxInterceptor_switchOn) {
               // 开启拦截
-              settings.ajaxInterceptor_rules.forEach(({match, overrideTxt}) => {
+              settings.ajaxInterceptor_rules.forEach(({match, overrideTxt = ''}) => {
                 if (match && RegExp(match).test(this.responseURL)) {
                   this.responseText = overrideTxt;
                   this.response = overrideTxt;
@@ -53,7 +53,7 @@ const myXHR = function() {
       // responseText和response不是writeable的，但拦截时需要修改它，所以修改就存储在this[`_${attr}`]上
       if (attr === 'responseText' || attr === 'response') {
         Object.defineProperty(this, attr, {
-          get: () => this[`_${attr}`] || xhr[attr],
+          get: () => this[`_${attr}`] == undefined ? xhr[attr] : this[`_${attr}`],
           set: (val) => this[`_${attr}`] = val,
           enumerable: true
         });

@@ -47,8 +47,25 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 // 接收iframe传来的信息，转发给content.js
 chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'ajaxInterceptor' && msg.to === 'background') {
+    if (msg.key === 'ajaxInterceptor_switchOn') {
+      if (msg.value === true) {
+        chrome.browserAction.setIcon({path: "/images/16.png"});
+      } else {
+        chrome.browserAction.setIcon({path: "/images/16_gray.png"});
+      }
+    }
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
       chrome.tabs.sendMessage(tabs[0].id, {...msg, to: 'content'});
     })
+  }
+});
+
+chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules'], (result) => {
+  if (result.hasOwnProperty('ajaxInterceptor_switchOn')) {
+    if (result.ajaxInterceptor_switchOn) {
+      chrome.browserAction.setIcon({path: "/images/16.png"});
+    } else {
+      chrome.browserAction.setIcon({path: "/images/16_gray.png"});
+    }
   }
 });
