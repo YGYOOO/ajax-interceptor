@@ -1,12 +1,15 @@
 .main {
   text-align: center;
   overflow-y: auto;
-  padding: 10px 10px;
-  width: 90%;
+  padding: 20px 13px;
+  width: 100%;
   height: 100%;
-  margin-left: 10%;
   background: white;
-  box-shadow: 0 0 15px 2px rgba(0,0,0,0.12);
+}
+.replace-with {
+  margin-bottom: 6px;
+  text-align: left;
+  font-weight: 500;
 }
 .overrideTxt {
   resize: none;
@@ -42,13 +45,23 @@
   color: hsv(0, 0, 75%);
 }
 .intercepted-requests {
+  margin-bottom: 6px;
+  margin-top: 7px;
   text-align: left;
-  line-height: 25px;
+  font-weight: 500;
 }
-.url {
+.intercepted {
+  text-align: left;
+}
+.intercepted > span {
+  width: 100%;
+  display: inline-block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.url {
+  vertical-align: top;
 }
 
 

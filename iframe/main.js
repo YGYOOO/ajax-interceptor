@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import 'antd/dist/antd.css';
-import {Switch, Collapse, Input, Button, Badge} from 'antd';
+import {Switch, Collapse, Input, Button, Badge, Tooltip} from 'antd';
 const Panel = Collapse.Panel;
 const TextArea = Input.TextArea;
 import './Main.less';
@@ -35,6 +35,8 @@ export default class Main extends Component {
         this.setState({interceptedRequests})
       }
     });
+
+    chrome.runtime.sendMessage('eflgjndpaafdkcbblljjdiakmcpobilj', {type: 'ajaxInterceptor', to: 'background', iframeScriptLoaded: true});
   }
 
   state = {
@@ -122,7 +124,7 @@ export default class Main extends Component {
                   </div>
                 }
               >
-                <div>
+                <div className="replace-with">
                   Replace With:
                 </div>
                 <textarea
@@ -135,12 +137,12 @@ export default class Main extends Component {
                   defaultValue={overrideTxt}
                   onChange={e => this.handleOverrideTxtChange(e, i)}
                 />
-                <div>
+                <div className="intercepted-requests">
                   Intercepted Requests:
                 </div>
-                <div className="intercepted-requests">
+                <div className="intercepted">
                   {this.state.interceptedRequests[match] && this.state.interceptedRequests[match].map(({url, num}) => (
-                    <div key={url}>
+                    <Tooltip placement="top" title={url} key={url}>
                       <Badge
                         count={num}
                         style={{
@@ -152,7 +154,7 @@ export default class Main extends Component {
                         }}
                       />
                       <span className="url">{url}</span>
-                    </div>
+                    </Tooltip>
                   ))}
                 </div>
               </Panel>

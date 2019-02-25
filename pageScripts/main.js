@@ -69,7 +69,6 @@ const myXHR = function() {
 }
 
 
-
 window.addEventListener("message", function(event) {
   const data = event.data;
   if (data.type === 'ajaxInterceptor' && data.to === 'pageScript') {

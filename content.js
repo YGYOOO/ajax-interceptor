@@ -9,21 +9,25 @@
 // document.documentElement.appendChild(s1);
 
 // 在页面上插入代码
-const s2 = document.createElement('script');
-s2.setAttribute('type', 'text/javascript');
-s2.setAttribute('src', chrome.extension.getURL('pageScripts/main.js'));
-document.documentElement.appendChild(s2);
+const script = document.createElement('script');
+script.setAttribute('type', 'text/javascript');
+script.setAttribute('src', chrome.extension.getURL('pageScripts/main.js'));
+document.documentElement.appendChild(script);
 
-chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules'], (result) => {
-  if (result.ajaxInterceptor_switchOn) {
-    postMessage({type: 'ajaxInterceptor', to: 'pageScript', key: 'ajaxInterceptor_switchOn', value: result.ajaxInterceptor_switchOn});
-  }
-  if (result.ajaxInterceptor_rules) {
-    postMessage({type: 'ajaxInterceptor', to: 'pageScript', key: 'ajaxInterceptor_rules', value: result.ajaxInterceptor_rules});
-  }
+script.addEventListener('load', () => {
+  chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules'], (result) => {
+    if (result.ajaxInterceptor_switchOn) {
+      postMessage({type: 'ajaxInterceptor', to: 'pageScript', key: 'ajaxInterceptor_switchOn', value: result.ajaxInterceptor_switchOn});
+    }
+    if (result.ajaxInterceptor_rules) {
+      postMessage({type: 'ajaxInterceptor', to: 'pageScript', key: 'ajaxInterceptor_rules', value: result.ajaxInterceptor_rules});
+    }
+  });
 });
 
+
 let iframe;
+let iframeLoaded = false;
 
 // 只在最顶层页面嵌入iframe
 if (window.self === window.top) {
@@ -52,22 +56,39 @@ if (window.self === window.top) {
         }
 
         return true;
-      })
+      });
     }
   }
 }
 
+
 // 接收background.js传来的信息，转发给pageScript
 chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'ajaxInterceptor' && msg.to === 'content') {
-    postMessage({...msg, to: 'pageScript'});
+    if (msg.hasOwnProperty('iframeScriptLoaded')) {
+      if (msg.iframeScriptLoaded) iframeLoaded = true;
+    } else {
+      postMessage({...msg, to: 'pageScript'});
+    }
   }
 });
 
 // 接收pageScript传来的信息，转发给iframe
 window.addEventListener("pageScript", function(event) {
-  chrome.runtime.sendMessage({type: 'ajaxInterceptor', to: 'iframe', ...event.detail});
-
+  if (iframeLoaded) {
+    chrome.runtime.sendMessage({type: 'ajaxInterceptor', to: 'iframe', ...event.detail});
+  } else {
+    let count = 0;
+    const checktLoadedInterval = setInterval(() => {
+      if (iframeLoaded) {
+        clearInterval(checktLoadedInterval);
+        chrome.runtime.sendMessage({type: 'ajaxInterceptor', to: 'iframe', ...event.detail});
+      }
+      if (count ++ > 500) {
+        clearInterval(checktLoadedInterval);
+      }
+    }, 10);
+  }
 }, false);
 
 // window.addEventListener("message", function(event) {
