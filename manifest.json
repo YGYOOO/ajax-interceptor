@@ -1,9 +1,8 @@
 {
   "name": "Ajax Interceptor",
   "version": "0.1",
-  "description": "Intercept ajax request and modify response text!",
+  "description": "Intercept ajax requests and modify response text!",
   "permissions": [
-    "activeTab",
     "declarativeContent",
     "storage",
     "webNavigation",

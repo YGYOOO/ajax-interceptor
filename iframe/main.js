@@ -36,7 +36,7 @@ export default class Main extends Component {
       }
     });
 
-    chrome.runtime.sendMessage('eflgjndpaafdkcbblljjdiakmcpobilj', {type: 'ajaxInterceptor', to: 'background', iframeScriptLoaded: true});
+    chrome.runtime.sendMessage(chrome.runtime.id, {type: 'ajaxInterceptor', to: 'background', iframeScriptLoaded: true});
   }
 
   state = {
@@ -45,7 +45,7 @@ export default class Main extends Component {
 
   set = (key, value) => {
     // 发送给background.js
-    chrome.runtime.sendMessage('eflgjndpaafdkcbblljjdiakmcpobilj', {type: 'ajaxInterceptor', to: 'background', key, value});
+    chrome.runtime.sendMessage(chrome.runtime.id, {type: 'ajaxInterceptor', to: 'background', key, value});
     chrome.storage && chrome.storage.local.set({[key]: value});
   }
 

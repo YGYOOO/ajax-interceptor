@@ -16,7 +16,25 @@ const settings = {
 };
 
 const originalXHR = window.XMLHttpRequest;
+
 const myXHR = function() {
+  let pageScriptEventDispatched = false;
+  const modifyResponse = () => {
+    settings.ajaxInterceptor_rules.forEach(({match, overrideTxt = ''}) => {
+      if (match && RegExp(match).test(this.responseURL)) {
+        this.responseText = overrideTxt;
+        this.response = overrideTxt;
+        
+        if (!pageScriptEventDispatched) {
+          window.dispatchEvent(new CustomEvent("pageScript", {
+            detail: {url: this.responseURL, match}
+          }));
+          pageScriptEventDispatched = true;
+        }
+      }
+    })
+  }
+  
   const xhr = new originalXHR;
   for (let attr in xhr) {
     if (attr === 'onreadystatechange') {
@@ -26,19 +44,21 @@ const myXHR = function() {
             // 请求成功
             if (settings.ajaxInterceptor_switchOn) {
               // 开启拦截
-              settings.ajaxInterceptor_rules.forEach(({match, overrideTxt = ''}) => {
-                if (match && RegExp(match).test(this.responseURL)) {
-                  this.responseText = overrideTxt;
-                  this.response = overrideTxt;
-                  window.dispatchEvent(new CustomEvent("pageScript", {
-                    detail: {url: this.responseURL, match}
-                  }));
-                }
-              })
+              modifyResponse();
             }
           }
-          this.onreadystatechange.apply(this, args);
+          this.onreadystatechange && this.onreadystatechange.apply(this, args);
         }
+      }
+      continue;
+    } else if (attr === 'onload') {
+      xhr.onload = (...args) => {
+        // 请求成功
+        if (settings.ajaxInterceptor_switchOn) {
+          // 开启拦截
+          modifyResponse();
+        }
+        this.onload && this.onload.apply(this, args);
       }
       continue;
     }
