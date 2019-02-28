@@ -2,16 +2,18 @@
   text-align: center;
   overflow-y: auto;
   padding: 20px 13px;
+  padding-bottom: 40px;
   width: 100%;
   height: 100%;
   background: white;
 }
 .settingBody {
+  position: relative;
   transition: all .5s;
   padding-top: 10px;
 }
 .settingBody-hidden {
-  transform: translateY(calc(-100% + 41px));
+  transform: translateY(calc(-100% + 10px));
 }
 .collapse {
   transition: all .6s;
@@ -81,10 +83,58 @@
 .panel-header {
   text-align: left;
 }
+.wrapper-btn-add {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  transition: top .2s;
+}
 .btn-add {
-  transition: all .5s;
+  transition: transform .5s;
   transition-delay: .1s;
 }
 .btn-add-hidden {
   transform: rotate(-135deg);
+}
+
+
+.ant-collapse-item {
+  animation-duration: 0.5s;
+  backface-visibility: visible !important;
+  animation-name: flipInX;
+}
+
+@keyframes flipInX {
+  from {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+    opacity: 0;
+  }
+
+  40% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+  }
+
+  60% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+    opacity: 1;
+  }
+
+  80% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+  }
+
+  to {
+    -webkit-transform: perspective(400px);
+    transform: perspective(400px);
+  }
 }

@@ -5,13 +5,16 @@ const Panel = Collapse.Panel;
 const TextArea = Input.TextArea;
 import './Main.less';
 
-const adjustHieght = ele => {
-  ele.style.height = '1px';
-  let height = 2 + ele.scrollHeight;
-  if (height < 52) height = 52;
-  else if (height > 177) height = 177;
-  ele.style.height = `${height}px`;
+const buildUUID = () => {
+  var dt = new Date().getTime();
+  var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (dt + Math.random()*16)%16 | 0;
+      dt = Math.floor(dt/16);
+      return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+  });
+  return uuid;
 }
+
 
 export default class Main extends Component {
   constructor() {
@@ -32,15 +35,58 @@ export default class Main extends Component {
         if (!exits) {
           interceptedRequests[match].push({url, num: 1});
         }
-        this.setState({interceptedRequests})
+        
+        this.setState({interceptedRequests}, () => {
+          if (!exits) {
+            // 新增的拦截的url，会多展示一行url，需要重新计算高度
+            this.updateAddBtnTop_interval();
+          }
+        })
       }
     });
 
     chrome.runtime.sendMessage(chrome.runtime.id, {type: 'ajaxInterceptor', to: 'background', iframeScriptLoaded: true});
+
+    this.collapseWrapperHeight = -1;
   }
 
   state = {
-    interceptedRequests: {}
+    interceptedRequests: {},
+  }
+
+  // componentDidUpdate() {
+  //   console.log(1)
+  // }
+
+  componentDidMount() {
+    this.updateAddBtnTop_interval();
+  }
+
+
+  updateAddBtnTop = () => {
+    let curCollapseWrapperHeight = this.collapseWrapperRef ? this.collapseWrapperRef.offsetHeight : 0;
+    if (this.collapseWrapperHeight !== curCollapseWrapperHeight) {
+      this.collapseWrapperHeight = curCollapseWrapperHeight;
+      clearTimeout(this.updateAddBtnTopDebounceTimeout);
+      this.updateAddBtnTopDebounceTimeout = setTimeout(() => {
+        this.addBtnRef.style.top = `${curCollapseWrapperHeight + 20}px`;
+      }, 50);
+    }
+  }
+
+  updateAddBtnTop_interval = ({timeout = 1000, interval = 50 } = {}) => {
+    const i = setInterval(this.updateAddBtnTop, interval);
+    setTimeout(() => {
+      clearInterval(i);
+    }, timeout);
+  }
+
+  adjustTextareaHieght = ele => {
+    ele.style.height = '1px';
+    let height = 2 + ele.scrollHeight;
+    if (height < 52) height = 52;
+    else if (height > 177) height = 177;
+    ele.style.height = `${height}px`;
   }
 
   set = (key, value) => {
@@ -71,16 +117,16 @@ export default class Main extends Component {
   }
 
   handleOverrideTxtChange = (e, i) => {
-    adjustHieght(e.target);
-
+    this.adjustTextareaHieght(e.target);
+    this.updateAddBtnTop();
     window.setting.ajaxInterceptor_rules[i].overrideTxt = e.target.value;
     this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
   }
 
 
   handleClickAdd = () => {
-    window.setting.ajaxInterceptor_rules.push({match: ''});
-    this.forceUpdate();
+    window.setting.ajaxInterceptor_rules.push({match: '', key: buildUUID()});
+    this.forceUpdate(this.updateAddBtnTop_interval);
   }
 
   handleClickRemove = (e, i) => {
@@ -95,7 +141,11 @@ export default class Main extends Component {
     this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
 
     delete interceptedRequests[match];
-    this.setState({interceptedRequests})
+    this.setState({interceptedRequests}, this.updateAddBtnTop_interval);
+  }
+
+  handleCollaseChange = () => {
+    this.updateAddBtnTop_interval();
   }
 
   render() {
@@ -108,68 +158,79 @@ export default class Main extends Component {
         />
         <div className={window.setting.ajaxInterceptor_switchOn ? 'settingBody' : 'settingBody settingBody-hidden'}>
           {window.setting.ajaxInterceptor_rules && window.setting.ajaxInterceptor_rules.length > 0 ? (
-            <Collapse className={window.setting.ajaxInterceptor_switchOn ? 'collapse' : 'collapse collapse-hidden'}>
-              {window.setting.ajaxInterceptor_rules.map(({match, overrideTxt}, i) => (
-                <Panel
-                  key={i}
-                  header={
-                    <div className="panel-header">
-                      <Input
-                        placeholder="regular expression"
-                        style={{width: '79%'}}
-                        defaultValue={match}
-                        onClick={e => e.stopPropagation()}
-                        onChange={e => this.handleMatchChange(e, i)}
-                      />
-                      <Button
-                        type="primary"
-                        shape="circle" 
-                        icon="minus"
-                        onClick={e => this.handleClickRemove(e, i)}
-                        style={{marginLeft: '4.5%'}}
-                      />
-                    </div>
-                  }
-                >
-                  <div className="replace-with">
-                    Replace With:
-                  </div>
-                  <textarea
-                    className="overrideTxt"
-                    placeholder="replace with"
-                    ref={ref => {
-                      ref && adjustHieght(ref);
-                    }}
-                    style={{resize: 'none'}}
-                    defaultValue={overrideTxt}
-                    onChange={e => this.handleOverrideTxtChange(e, i)}
-                  />
-                  <div className="intercepted-requests">
-                    Intercepted Requests:
-                  </div>
-                  <div className="intercepted">
-                    {this.state.interceptedRequests[match] && this.state.interceptedRequests[match].map(({url, num}) => (
-                      <Tooltip placement="top" title={url} key={url}>
-                        <Badge
-                          count={num}
-                          style={{
-                            backgroundColor: '#fff',
-                            color: '#999',
-                            boxShadow: '0 0 0 1px #d9d9d9 inset',
-                            marginTop: '-3px',
-                            marginRight: '4px'
-                          }}
+            <div ref={ref => this.collapseWrapperRef = ref}>
+              <Collapse
+                className={window.setting.ajaxInterceptor_switchOn ? 'collapse' : 'collapse collapse-hidden'}
+                // onChange={this.handleCollaseChange}
+                onChangeDone={this.handleCollaseChange}
+              >
+                {window.setting.ajaxInterceptor_rules.map(({match, overrideTxt, key}, i) => (
+                  <Panel
+                    key={key}
+                    header={
+                      <div className="panel-header">
+                        <Input
+                          placeholder="regular expression"
+                          style={{width: '79%'}}
+                          defaultValue={match}
+                          onClick={e => e.stopPropagation()}
+                          onChange={e => this.handleMatchChange(e, i)}
                         />
-                        <span className="url">{url}</span>
-                      </Tooltip>
-                    ))}
-                  </div>
-                </Panel>
-              ))}
-            </Collapse> 
+                        <Button
+                          type="primary"
+                          shape="circle" 
+                          icon="minus"
+                          onClick={e => this.handleClickRemove(e, i)}
+                          style={{marginLeft: '4.5%'}}
+                        />
+                      </div>
+                    }
+                  >
+                    <div className="replace-with">
+                      Replace With:
+                    </div>
+                    <textarea
+                      className="overrideTxt"
+                      placeholder="replace with"
+                      ref={ref => {
+                        ref && this.adjustTextareaHieght(ref);
+                      }}
+                      style={{resize: 'none'}}
+                      defaultValue={overrideTxt}
+                      onChange={e => this.handleOverrideTxtChange(e, i)}
+                    />
+                    {this.state.interceptedRequests[match] && (
+                      <>
+                        <div className="intercepted-requests">
+                          Intercepted Requests:
+                        </div>
+                        <div className="intercepted">
+                          {this.state.interceptedRequests[match] && this.state.interceptedRequests[match].map(({url, num}) => (
+                            <Tooltip placement="top" title={url} key={url}>
+                              <Badge
+                                count={num}
+                                style={{
+                                  backgroundColor: '#fff',
+                                  color: '#999',
+                                  boxShadow: '0 0 0 1px #d9d9d9 inset',
+                                  marginTop: '-3px',
+                                  marginRight: '4px'
+                                }}
+                              />
+                              <span className="url">{url}</span>
+                            </Tooltip>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </Panel>
+                ))}
+              </Collapse> 
+            </div>
           ): <div />}
-          <div className={window.setting.ajaxInterceptor_switchOn ? 'btn-add' : 'btn-add btn-add-hidden'}>
+          <div ref={ref => this.addBtnRef = ref} className="wrapper-btn-add">
             <Button
+              className={`btn-add ${window.setting.ajaxInterceptor_switchOn ? '' : ' btn-add-hidden'}`}
               type="primary"
               shape="circle" 
               icon="plus"

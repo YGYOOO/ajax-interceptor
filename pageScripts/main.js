@@ -1,14 +1,3 @@
-// log = console.log;
-// console = {
-//   ...console,
-//   log: (...args) => {
-//     log('Intercept:', ...args);
-//   }
-// }
-// chrome.storage.sync.get(['open'], function(result) {
-//   console.log('Value currently is ' + result.key);
-// });
-
 
 const settings = {
   ajaxInterceptor_switchOn: false,
@@ -63,11 +52,7 @@ const myXHR = function() {
       continue;
     }
 
-    var type = '';
-    try {
-      type = typeof xhr[attr]
-    } catch (e) {}
-    if (type === 'function') {
+    if (typeof xhr[attr] === 'function') {
       this[attr] = xhr[attr].bind(xhr);
     } else {
       // responseText和response不是writeable的，但拦截时需要修改它，所以修改就存储在this[`_${attr}`]上
