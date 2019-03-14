@@ -1,5 +1,5 @@
 .api-interceptor {
-  transform: translateX(370px);
+  transform: translateX(420px);
   transition: all .4s;
   box-shadow: 0 0 15px 2px rgba(0,0,0,0.12);
 }

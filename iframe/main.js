@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 import 'antd/dist/antd.css';
 import {Switch, Collapse, Input, Button, Badge, Tooltip} from 'antd';
 const Panel = Collapse.Panel;
-const TextArea = Input.TextArea;
+
+import Replacer from './Replacer';
+
 import './Main.less';
 
 const buildUUID = () => {
@@ -35,7 +37,6 @@ export default class Main extends Component {
         if (!exits) {
           interceptedRequests[match].push({url, num: 1});
         }
-        
         this.setState({interceptedRequests}, () => {
           if (!exits) {
             // 新增的拦截的url，会多展示一行url，需要重新计算高度
@@ -53,10 +54,6 @@ export default class Main extends Component {
   state = {
     interceptedRequests: {},
   }
-
-  // componentDidUpdate() {
-  //   console.log(1)
-  // }
 
   componentDidMount() {
     this.updateAddBtnTop_interval();
@@ -79,14 +76,6 @@ export default class Main extends Component {
     setTimeout(() => {
       clearInterval(i);
     }, timeout);
-  }
-
-  adjustTextareaHieght = ele => {
-    ele.style.height = '1px';
-    let height = 2 + ele.scrollHeight;
-    if (height < 52) height = 52;
-    else if (height > 177) height = 177;
-    ele.style.height = `${height}px`;
   }
 
   set = (key, value) => {
@@ -115,14 +104,6 @@ export default class Main extends Component {
 
     this.forceUpdateDebouce();
   }
-
-  handleOverrideTxtChange = (e, i) => {
-    this.adjustTextareaHieght(e.target);
-    this.updateAddBtnTop();
-    window.setting.ajaxInterceptor_rules[i].overrideTxt = e.target.value;
-    this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
-  }
-
 
   handleClickAdd = () => {
     window.setting.ajaxInterceptor_rules.push({match: '', key: buildUUID()});
@@ -186,19 +167,32 @@ export default class Main extends Component {
                       </div>
                     }
                   >
-                    <div className="replace-with">
+                    <Replacer
+                      defaultValue={overrideTxt}
+                      updateAddBtnTop={this.updateAddBtnTop}
+                      index={i}
+                      set={this.set}
+                    />
+                    {/* <div className="replace-with">
                       Replace With:
                     </div>
                     <textarea
                       className="overrideTxt"
-                      placeholder="replace with"
-                      ref={ref => {
-                        ref && this.adjustTextareaHieght(ref);
-                      }}
+                      // placeholder="replace with"
                       style={{resize: 'none'}}
                       defaultValue={overrideTxt}
-                      onChange={e => this.handleOverrideTxtChange(e, i)}
+                      onChange={e => this.handleOverrideTxtChange(e.target.value, i)}
                     />
+                    <Switch onChange={this.handleEditorSwitch} checkedChildren="JSON editor" unCheckedChildren="JSON editor" size="small" />
+                    {this.state.showJSONEditor && <div className="JSONEditor">
+                      <ReactJson
+                        name=""
+                        src={JSON.parse(overrideTxt)}
+                        onEdit={val => this.handleJSONEditorChange(val, i)}
+                        onAdd={val => this.handleJSONEditorChange(val, i)}
+                        onDelete={val => this.handleJSONEditorChange(val, i)}
+                      />
+                    </div>} */}
                     {this.state.interceptedRequests[match] && (
                       <>
                         <div className="intercepted-requests">

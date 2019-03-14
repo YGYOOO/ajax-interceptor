@@ -1,6 +1,6 @@
 {
   "name": "Ajax Interceptor",
-  "version": "0.1",
+  "version": "0.3",
   "description": "Intercept ajax requests and modify response text!",
   "permissions": [
     "declarativeContent",
@@ -20,8 +20,8 @@
   "browser_action": {
   },
   "icons": {
-    "16": "images/16.png",
-    "32": "images/32.png",
+    "16": "images/16_gray.png",
+    "32": "images/32_gray.png",
     "48": "images/48.png",
     "128": "images/128.png"
   },

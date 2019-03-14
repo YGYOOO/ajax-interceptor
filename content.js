@@ -41,7 +41,7 @@ if (window.self === window.top) {
       iframe = document.createElement('iframe'); 
       iframe.className = "api-interceptor";
       iframe.style.height = "100%";
-      iframe.style.width = "350px";
+      iframe.style.width = "400px";
       iframe.style.position = "fixed";
       iframe.style.top = "0px";
       iframe.style.right = "0px";

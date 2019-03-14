@@ -42,6 +42,11 @@ module.exports = {
       }, {
         loader: 'less-loader?'
       }]
+    }, {
+      test: /\.svg?$/,
+      use: [{
+        loader: 'svg-loader',
+      }]
     }]
   },
   devServer: {
