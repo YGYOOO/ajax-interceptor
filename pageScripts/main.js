@@ -10,7 +10,7 @@ let ajax_interceptor_qoweifjqon = {
     let pageScriptEventDispatched = false;
     const modifyResponse = () => {
       ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({match, overrideTxt = ''}) => {
-        if (match && RegExp(match).test(this.responseURL)) {
+        if (match && this.responseURL.indexOf(match) > -1) {
           this.responseText = overrideTxt;
           this.response = overrideTxt;
           
@@ -28,16 +28,14 @@ let ajax_interceptor_qoweifjqon = {
     for (let attr in xhr) {
       if (attr === 'onreadystatechange') {
         xhr.onreadystatechange = (...args) => {
-          if (this.onreadystatechange) {
-            if (this.readyState == 4) {
-              // 请求成功
-              if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_switchOn) {
-                // 开启拦截
-                modifyResponse();
-              }
+          if (this.readyState == 4) {
+            // 请求成功
+            if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_switchOn) {
+              // 开启拦截
+              modifyResponse();
             }
-            this.onreadystatechange && this.onreadystatechange.apply(this, args);
           }
+          this.onreadystatechange && this.onreadystatechange.apply(this, args);
         }
         continue;
       } else if (attr === 'onload') {

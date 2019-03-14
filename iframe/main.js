@@ -66,7 +66,7 @@ export default class Main extends Component {
       this.collapseWrapperHeight = curCollapseWrapperHeight;
       clearTimeout(this.updateAddBtnTopDebounceTimeout);
       this.updateAddBtnTopDebounceTimeout = setTimeout(() => {
-        this.addBtnRef.style.top = `${curCollapseWrapperHeight + 20}px`;
+        this.addBtnRef.style.top = `${curCollapseWrapperHeight + 30}px`;
       }, 50);
     }
   }
@@ -125,7 +125,7 @@ export default class Main extends Component {
     this.setState({interceptedRequests}, this.updateAddBtnTop_interval);
   }
 
-  handleCollaseChange = () => {
+  handleCollaseChange = ({timeout = 1200, interval = 50 }) => {
     this.updateAddBtnTop_interval();
   }
 
@@ -142,8 +142,8 @@ export default class Main extends Component {
             <div ref={ref => this.collapseWrapperRef = ref}>
               <Collapse
                 className={window.setting.ajaxInterceptor_switchOn ? 'collapse' : 'collapse collapse-hidden'}
-                // onChange={this.handleCollaseChange}
-                onChangeDone={this.handleCollaseChange}
+                onChange={this.handleCollaseChange}
+                // onChangeDone={this.handleCollaseChange}
               >
                 {window.setting.ajaxInterceptor_rules.map(({match, overrideTxt, key}, i) => (
                   <Panel
@@ -151,7 +151,7 @@ export default class Main extends Component {
                     header={
                       <div className="panel-header">
                         <Input
-                          placeholder="regular expression"
+                          placeholder="url"
                           style={{width: '79%'}}
                           defaultValue={match}
                           onClick={e => e.stopPropagation()}

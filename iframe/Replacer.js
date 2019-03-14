@@ -78,7 +78,7 @@ export default class Replacer extends Component {
           this.state.src ? 
           <div className="JSONEditor">
             <ReactJson
-              name=""
+              name={false}
               collapsed
               collapseStringsAfterLength={12}
               src={this.state.src}
