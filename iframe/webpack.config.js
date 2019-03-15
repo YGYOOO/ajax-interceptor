@@ -1,5 +1,4 @@
 const path = require('path');
-const fs = require('fs');
 
 module.exports = {
   entry: './index.js',
@@ -7,6 +6,7 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname)
   },
+  mode: 'production',
   module: {
     rules: [{
       test: /\.tsx?$/,

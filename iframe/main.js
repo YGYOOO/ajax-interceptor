@@ -151,7 +151,7 @@ export default class Main extends Component {
                     header={
                       <div className="panel-header">
                         <Input
-                          placeholder="url"
+                          placeholder="URL"
                           style={{width: '79%'}}
                           defaultValue={match}
                           onClick={e => e.stopPropagation()}
