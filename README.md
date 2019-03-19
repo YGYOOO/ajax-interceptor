@@ -8,6 +8,6 @@ chrome商店搜索Ajax Interceptor
 
 
 ## 使用示例
-<img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/screenshot.png" width="500"> 
+<img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/screenshot.png" width="700"> 
 
 示例视频：https://youtu.be/OL87EPOEVIU
