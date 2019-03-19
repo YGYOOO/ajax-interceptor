@@ -6,8 +6,8 @@
 ## 安装
 chrome商店搜索Ajax Interceptor
 
-## 截图
-<img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/screenshot.png" width="500">
 
 ## 使用示例
-https://youtu.be/OL87EPOEVIU
+<img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/screenshot.png" width="500"> 
+
+示例视频：https://youtu.be/OL87EPOEVIU
