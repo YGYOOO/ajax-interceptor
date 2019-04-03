@@ -8,7 +8,7 @@
 
 
 ## 使用示例
-<img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/screenshot.png" width="700"> 
+<img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/screenshot2.png" width="700"> 
 
 示例视频：https://youtu.be/OL87EPOEVIU
 
