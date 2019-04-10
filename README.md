@@ -24,4 +24,4 @@ version 0.4:
 - fetch发起的请求也可以被修改了
 
 version 0.3:
-- 增加了JSON编辑功能
+- 增加了JSON编辑功能 
