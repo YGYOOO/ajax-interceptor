@@ -40,12 +40,12 @@ if (window.self === window.top) {
     if (document.readyState === 'complete') {
       iframe = document.createElement('iframe'); 
       iframe.className = "api-interceptor";
-      iframe.style.height = "100%";
-      iframe.style.width = "400px";
-      iframe.style.position = "fixed";
-      iframe.style.top = "0px";
-      iframe.style.right = "0px";
-      iframe.style.zIndex = "99999999999999";
+      iframe.style.setProperty('height', '100%', 'important');
+      iframe.style.setProperty('width', '400px', 'important');
+      iframe.style.setProperty('position', 'fixed', 'important');
+      iframe.style.setProperty('top', '0', 'important');
+      iframe.style.setProperty('right', '0', 'important');
+      iframe.style.setProperty('z-index', '9999999999999', 'important');
       iframe.frameBorder = "none"; 
       iframe.src = chrome.extension.getURL("iframe/index.html")
       document.body.appendChild(iframe);
