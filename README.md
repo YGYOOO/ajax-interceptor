@@ -20,6 +20,9 @@
 
 
 ## 更新说明
+version 0.5：
+- 修复bug：https://github.com/YGYOOO/ajax-interceptor/issues/1
+
 version 0.4:
 - fetch发起的请求也可以被修改了
 
