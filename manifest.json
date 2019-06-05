@@ -37,7 +37,6 @@
   "web_accessible_resources": [
     "pageScripts/defaultSettings.js",
     "pageScripts/main.js",
-    "iframe.css",
     "iframe/index.html"
   ]
 }
