@@ -31,10 +31,6 @@ let iframeLoaded = false;
 
 // 只在最顶层页面嵌入iframe
 if (window.self === window.top) {
-  const link = document.createElement('link');
-  link.setAttribute('rel', 'stylesheet');
-  link.setAttribute('href', chrome.extension.getURL('iframe.css'));
-  document.documentElement.appendChild(link);
 
   document.onreadystatechange = () => {
     if (document.readyState === 'complete') {
