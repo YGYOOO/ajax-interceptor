@@ -11,8 +11,8 @@
 修改ajax请求返回结果的chrome插件   
 
 ## 安装
-地址：https://chrome.google.com/webstore/detail/ajax-interceptor/nhpjggchkhnlbgdfcbgpdpkifemomkpg
-或在chrome商店搜索Ajax Interceptor
+地址：https://chrome.google.com/webstore/detail/ajax-interceptor/nhpjggchkhnlbgdfcbgpdpkifemomkpg   
+不能翻墙的话可以在这里下载：https://github.com/YGYOOO/ajax-interceptor/blob/master/Ajax-Interceptor.crx
 
 
 ## 使用示例
