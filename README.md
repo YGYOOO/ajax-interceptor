@@ -18,7 +18,7 @@ chrome商店地址：https://chrome.google.com/webstore/detail/ajax-interceptor/
 ## 使用示例
 <img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/screenshot2.png" width="700"> 
 
-示例视频：https://youtu.be/OL87EPOEVIU
+示例视频：https://weibo.com/tv/v/HlVZD8cR9?fid=1034:4352275389595232
 
 
 ## 注意
