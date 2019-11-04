@@ -9,8 +9,8 @@ let ajax_interceptor_qoweifjqon = {
   myXHR: function() {
     let pageScriptEventDispatched = false;
     const modifyResponse = () => {
-      ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({match, overrideTxt = ''}) => {
-        if (match && this.responseURL.indexOf(match) > -1) {
+      ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({switchOn = true, match, overrideTxt = ''}) => {
+        if (switchOn && match && this.responseURL.indexOf(match) > -1) {
           this.responseText = overrideTxt;
           this.response = overrideTxt;
           
@@ -132,9 +132,9 @@ let ajax_interceptor_qoweifjqon = {
   },
 }
 
-
 window.addEventListener("message", function(event) {
   const data = event.data;
+
   if (data.type === 'ajaxInterceptor' && data.to === 'pageScript') {
     ajax_interceptor_qoweifjqon.settings[data.key] = data.value;
   }

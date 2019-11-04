@@ -28,6 +28,9 @@ chrome商店地址：https://chrome.google.com/webstore/detail/ajax-interceptor/
 
 
 ## 更新说明
+version 0.7:
+- 新增单个URL开关功能：https://github.com/YGYOOO/ajax-interceptor/issues/7
+
 version 0.5：
 - 修复bug：https://github.com/YGYOOO/ajax-interceptor/issues/1
 

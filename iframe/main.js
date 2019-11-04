@@ -98,6 +98,13 @@ export default class Main extends Component {
     this.forceUpdate();
   }
 
+  handleSingleSwitchChange = (switchOn, i) => {
+    window.setting.ajaxInterceptor_rules[i].switchOn = switchOn;
+    this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
+
+    this.forceUpdateDebouce();
+  }
+
   handleMatchChange = (e, i) => {
     window.setting.ajaxInterceptor_rules[i].match = e.target.value;
     this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
@@ -106,7 +113,7 @@ export default class Main extends Component {
   }
 
   handleClickAdd = () => {
-    window.setting.ajaxInterceptor_rules.push({match: '', key: buildUUID()});
+    window.setting.ajaxInterceptor_rules.push({match: '', switchOn: true, key: buildUUID()});
     this.forceUpdate(this.updateAddBtnTop_interval);
   }
 
@@ -145,24 +152,30 @@ export default class Main extends Component {
                 onChange={this.handleCollaseChange}
                 // onChangeDone={this.handleCollaseChange}
               >
-                {window.setting.ajaxInterceptor_rules.map(({match, overrideTxt, key}, i) => (
+                {window.setting.ajaxInterceptor_rules.map(({match, overrideTxt, switchOn = true, key}, i) => (
                   <Panel
                     key={key}
                     header={
-                      <div className="panel-header">
+                      <div className="panel-header" onClick={e => e.stopPropagation()}>
                         <Input
                           placeholder="URL Filter"
-                          style={{width: '79%'}}
+                          style={{width: '73%'}}
                           defaultValue={match}
-                          onClick={e => e.stopPropagation()}
+                          // onClick={e => e.stopPropagation()}
                           onChange={e => this.handleMatchChange(e, i)}
                         />
+                        <Switch
+                          size="small"
+                          defaultChecked={switchOn}
+                          onChange={val => this.handleSingleSwitchChange(val, i)}
+                        />
                         <Button
+                          style={{marginRight: '16px'}}
                           type="primary"
                           shape="circle" 
                           icon="minus"
+                          size="small"
                           onClick={e => this.handleClickRemove(e, i)}
-                          style={{marginLeft: '4.5%'}}
                         />
                       </div>
                     }
