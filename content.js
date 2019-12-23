@@ -38,6 +38,7 @@ if (window.self === window.top) {
       iframe.className = "api-interceptor";
       iframe.style.setProperty('height', '100%', 'important');
       iframe.style.setProperty('width', '400px', 'important');
+      iframe.style.setProperty('min-width', '1px', 'important');
       iframe.style.setProperty('position', 'fixed', 'important');
       iframe.style.setProperty('top', '0', 'important');
       iframe.style.setProperty('right', '0', 'important');
