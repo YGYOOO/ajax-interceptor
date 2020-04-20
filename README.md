@@ -18,7 +18,7 @@ https://chrome.google.com/webstore/detail/ajax-interceptor/nhpjggchkhnlbgdfcbgpd
 ## Example
 <img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/screenshot2.png" width="700"> 
 
-示例视频：https://weibo.com/tv/v/HlVZD8cR9?fid=1034:4352275389595232
+Example video：https://www.youtube.com/watch?v=OL87EPOEVIU
 
 
 ## Notes
