@@ -1,3 +1,5 @@
+English | [简体中文](./README-zh.md)   
+
 <img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/icon.png" width="300">   
 
 [![](https://img.shields.io/chrome-web-store/v/nhpjggchkhnlbgdfcbgpdpkifemomkpg.svg?logo=Google%20Chrome&logoColor=white&color=blue&style=flat-square)](https://chrome.google.com/webstore/detail/ajax-interceptor/nhpjggchkhnlbgdfcbgpdpkifemomkpg) 
@@ -7,10 +9,6 @@
 [![](https://img.shields.io/github/followers/YGYOOO.svg?label=Follow&style=social)](https://github.com/YGYOOO)
 [![](https://img.shields.io/badge/Follow%20@卧槽竟然是YGY的微博--brightgreen.svg?logo=Sina%20Weibo&style=social)](https://weibo.com/u/5352731024)
 [![](https://img.shields.io/badge/Follow%20@YGYOOO--brightgreen.svg?logo=Twitter&style=social)](https://twitter.com/YGYOOO)
-
-
-English | [简体中文](./README-zh.md)   
-
 
 A Chrome Extension for modifing response text of ajax requests. You may use it for debugging.
 
