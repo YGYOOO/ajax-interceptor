@@ -8,7 +8,9 @@
 [![](https://img.shields.io/badge/Follow%20@卧槽竟然是YGY的微博--brightgreen.svg?logo=Sina%20Weibo&style=social)](https://weibo.com/u/5352731024)
 [![](https://img.shields.io/badge/Follow%20@YGYOOO--brightgreen.svg?logo=Twitter&style=social)](https://twitter.com/YGYOOO)
 
+
 English | [简体中文](./README-zh.md)   
+
 
 A Chrome Extension for modifing response text of ajax requests. You may use it for debugging.
 
@@ -19,7 +21,6 @@ https://chrome.google.com/webstore/detail/ajax-interceptor/nhpjggchkhnlbgdfcbgpd
 <img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/screenshot2.png" width="700"> 
 
 Example video：https://www.youtube.com/watch?v=OL87EPOEVIU
-
 
 ## Notes
 1. You may have to restart chrome or refresh the current page after you added this extension.
