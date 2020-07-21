@@ -42,6 +42,8 @@ if (window.self === window.top) {
       iframe.style.setProperty('position', 'fixed', 'important');
       iframe.style.setProperty('top', '0', 'important');
       iframe.style.setProperty('right', '0', 'important');
+      iframe.style.setProperty('left', 'unset', 'important');
+      iframe.style.setProperty('bottom', 'unset', 'important');
       iframe.style.setProperty('z-index', '9999999999999', 'important');
       iframe.style.setProperty('transform', 'translateX(420px)', 'important');
       iframe.style.setProperty('transition', 'all .4s', 'important');
