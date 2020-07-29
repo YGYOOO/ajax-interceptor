@@ -170,7 +170,7 @@ export default class Main extends Component {
                             <Option value="regex">regex</Option>
                           </Select>
                           <Input
-                            placeholder={filterType === 'normal' ? 'eg: api/get' : 'eg: abc.*'}
+                            placeholder={filterType === 'normal' ? 'eg: abc/get' : 'eg: abc.*'}
                             style={{width: '63%'}}
                             defaultValue={match}
                             // onClick={e => e.stopPropagation()}
