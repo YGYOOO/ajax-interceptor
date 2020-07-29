@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import 'antd/dist/antd.css';
-import {Switch, Collapse, Input, Button, Badge, Tooltip} from 'antd';
+import {Switch, Collapse, Input, Select, Button, Badge, Tooltip} from 'antd';
 const Panel = Collapse.Panel;
 
 import Replacer from './Replacer';
@@ -105,6 +105,13 @@ export default class Main extends Component {
     this.forceUpdateDebouce();
   }
 
+  handleFilterTypeChange = (val, i) => {
+    window.setting.ajaxInterceptor_rules[i].filterType = val;
+    this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
+
+    this.forceUpdate();
+  }
+
   handleMatchChange = (e, i) => {
     window.setting.ajaxInterceptor_rules[i].match = e.target.value;
     this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
@@ -152,18 +159,24 @@ export default class Main extends Component {
                 onChange={this.handleCollaseChange}
                 // onChangeDone={this.handleCollaseChange}
               >
-                {window.setting.ajaxInterceptor_rules.map(({match, overrideTxt, switchOn = true, key}, i) => (
+                {window.setting.ajaxInterceptor_rules.map(({filterType = 'normal', match, overrideTxt, switchOn = true, key}, i) => (
                   <Panel
                     key={key}
                     header={
                       <div className="panel-header" onClick={e => e.stopPropagation()}>
-                        <Input
-                          placeholder="URL Filter"
-                          style={{width: '73%'}}
-                          defaultValue={match}
-                          // onClick={e => e.stopPropagation()}
-                          onChange={e => this.handleMatchChange(e, i)}
-                        />
+                        <Input.Group compact style={{width: '74%'}}>
+                          <Select defaultValue={filterType} style={{width: '37%'}} onChange={e => this.handleFilterTypeChange(e, i)}>
+                            <Option value="normal">normal</Option>
+                            <Option value="regex">regex</Option>
+                          </Select>
+                          <Input
+                            placeholder={filterType === 'normal' ? 'eg: api/get' : 'eg: abc.*'}
+                            style={{width: '63%'}}
+                            defaultValue={match}
+                            // onClick={e => e.stopPropagation()}
+                            onChange={e => this.handleMatchChange(e, i)}
+                          />
+                        </Input.Group>
                         <Switch
                           size="small"
                           defaultChecked={switchOn}

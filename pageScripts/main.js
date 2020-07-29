@@ -9,8 +9,16 @@ let ajax_interceptor_qoweifjqon = {
   myXHR: function() {
     let pageScriptEventDispatched = false;
     const modifyResponse = () => {
-      ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({switchOn = true, match, overrideTxt = ''}) => {
-        if (switchOn && match && this.responseURL.indexOf(match) > -1) {
+      ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({filterType = 'normal', switchOn = true, match, overrideTxt = ''}) => {
+        let matched = false;
+        if (switchOn && match) {
+          if (filterType === 'normal' && this.responseURL.indexOf(match) > -1) {
+            matched = true;
+          } else if (filterType === 'regex' && this.responseURL.match(new RegExp(match, 'i'))) {
+            matched = true;
+          }
+        }
+        if (matched) {
           this.responseText = overrideTxt;
           this.response = overrideTxt;
           
@@ -75,8 +83,17 @@ let ajax_interceptor_qoweifjqon = {
   myFetch: function(...args) {
     return ajax_interceptor_qoweifjqon.originalFetch(...args).then((response) => {
       let txt = undefined;
-      ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({match, overrideTxt = ''}) => {
-        if (match && response.url.indexOf(match) > -1) {
+      ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({filterType = 'normal', switchOn = true, match, overrideTxt = ''}) => {
+        let matched = false;
+        if (switchOn && match) {
+          if (filterType === 'normal' && response.url.indexOf(match) > -1) {
+            matched = true;
+          } else if (filterType === 'regex' && response.url.match(new RegExp(match, 'i'))) {
+            matched = true;
+          }
+        }
+
+        if (matched) {
           window.dispatchEvent(new CustomEvent("pageScript", {
             detail: {url: response.url, match}
           }));
