@@ -71,6 +71,7 @@ export default class Main extends Component {
     }
   }
 
+  // 计算按钮位置
   updateAddBtnTop_interval = ({timeout = 1000, interval = 50 } = {}) => {
     const i = setInterval(this.updateAddBtnTop, interval);
     setTimeout(() => {
@@ -91,17 +92,11 @@ export default class Main extends Component {
     }, 1000);
   }
 
-  handleSwitchChange = () => {
-    window.setting.ajaxInterceptor_switchOn = !window.setting.ajaxInterceptor_switchOn;
-    this.set('ajaxInterceptor_switchOn', window.setting.ajaxInterceptor_switchOn);
-
-    this.forceUpdate();
-  }
-
   handleSingleSwitchChange = (switchOn, i) => {
     window.setting.ajaxInterceptor_rules[i].switchOn = switchOn;
     this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
 
+    // 这么搞主要是为了能实时同步window.setting.ajaxInterceptor_rules，并且让性能好一点
     this.forceUpdateDebouce();
   }
 
@@ -141,6 +136,13 @@ export default class Main extends Component {
 
   handleCollaseChange = ({timeout = 1200, interval = 50 }) => {
     this.updateAddBtnTop_interval();
+  }
+
+  handleSwitchChange = () => {
+    window.setting.ajaxInterceptor_switchOn = !window.setting.ajaxInterceptor_switchOn;
+    this.set('ajaxInterceptor_switchOn', window.setting.ajaxInterceptor_switchOn);
+
+    this.forceUpdate();
   }
 
   render() {
