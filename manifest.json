@@ -1,6 +1,6 @@
 {
   "name": "Ajax Interceptor",
-  "version": "0.9",
+  "version": "1.0",
   "description": "To modify response text of ajax requests",
   "permissions": [
     "storage",
