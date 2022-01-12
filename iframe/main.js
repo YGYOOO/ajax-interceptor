@@ -114,8 +114,15 @@ export default class Main extends Component {
     this.forceUpdateDebouce();
   }
 
+  handleLabelChange = (e, i) => {
+    window.setting.ajaxInterceptor_rules[i].label = e.target.value;
+    this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
+
+    this.forceUpdateDebouce();
+  }
+
   handleClickAdd = () => {
-    window.setting.ajaxInterceptor_rules.push({match: '', switchOn: true, key: buildUUID()});
+    window.setting.ajaxInterceptor_rules.push({match: '', label: '', switchOn: true, key: buildUUID()});
     this.forceUpdate(this.updateAddBtnTop_interval);
   }
 
@@ -123,6 +130,7 @@ export default class Main extends Component {
     e.stopPropagation();
     const {interceptedRequests} = this.state;
     const match = window.setting.ajaxInterceptor_rules[i].match;
+    const label = window.setting.ajaxInterceptor_rules[i].label;
 
     window.setting.ajaxInterceptor_rules = [
       ...window.setting.ajaxInterceptor_rules.slice(0, i),
@@ -131,6 +139,7 @@ export default class Main extends Component {
     this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
 
     delete interceptedRequests[match];
+    delete interceptedRequests[label];
     this.setState({interceptedRequests}, this.updateAddBtnTop_interval);
   }
 
@@ -161,19 +170,24 @@ export default class Main extends Component {
                 onChange={this.handleCollaseChange}
                 // onChangeDone={this.handleCollaseChange}
               >
-                {window.setting.ajaxInterceptor_rules.map(({filterType = 'normal', match, overrideTxt, switchOn = true, key}, i) => (
+                {window.setting.ajaxInterceptor_rules.map(({filterType = 'normal', match, label, overrideTxt, switchOn = true, key}, i) => (
                   <Panel
                     key={key}
                     header={
                       <div className="panel-header" onClick={e => e.stopPropagation()}>
                         <Input.Group compact style={{width: '74%'}}>
-                          <Select defaultValue={filterType} style={{width: '37%'}} onChange={e => this.handleFilterTypeChange(e, i)}>
+                          <Input 
+                            placeholder="请输入名称或备注"
+                            style={{width: '20%'}}
+                            defaultValue={label}
+                            onChange={e => this.handleLabelChange(e, i)}/>
+                          <Select defaultValue={filterType} style={{width: '25%'}} onChange={e => this.handleFilterTypeChange(e, i)}>
                             <Option value="normal">normal</Option>
                             <Option value="regex">regex</Option>
                           </Select>
                           <Input
                             placeholder={filterType === 'normal' ? 'eg: abc/get' : 'eg: abc.*'}
-                            style={{width: '63%'}}
+                            style={{width: '54%'}}
                             defaultValue={match}
                             // onClick={e => e.stopPropagation()}
                             onChange={e => this.handleMatchChange(e, i)}
