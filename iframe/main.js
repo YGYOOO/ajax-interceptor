@@ -175,19 +175,19 @@ export default class Main extends Component {
                     key={key}
                     header={
                       <div className="panel-header" onClick={e => e.stopPropagation()}>
-                        <Input.Group compact style={{width: '74%'}}>
+                        <Input.Group compact style={{width: '76%'}}>
                           <Input 
-                            placeholder="请输入名称或备注"
-                            style={{width: '20%'}}
+                            placeholder="备注"
+                            style={{width: '19%'}}
                             defaultValue={label}
                             onChange={e => this.handleLabelChange(e, i)}/>
-                          <Select defaultValue={filterType} style={{width: '25%'}} onChange={e => this.handleFilterTypeChange(e, i)}>
+                          <Select defaultValue={filterType} style={{width: '32%'}} onChange={e => this.handleFilterTypeChange(e, i)}>
                             <Option value="normal">normal</Option>
                             <Option value="regex">regex</Option>
                           </Select>
                           <Input
                             placeholder={filterType === 'normal' ? 'eg: abc/get' : 'eg: abc.*'}
-                            style={{width: '54%'}}
+                            style={{width: '49%'}}
                             defaultValue={match}
                             // onClick={e => e.stopPropagation()}
                             onChange={e => this.handleMatchChange(e, i)}
