@@ -122,7 +122,7 @@ export default class Main extends Component {
   }
 
   handleClickAdd = () => {
-    window.setting.ajaxInterceptor_rules.push({match: '', label: '', switchOn: true, key: buildUUID()});
+    window.setting.ajaxInterceptor_rules.push({match: '', label: `url${window.setting.ajaxInterceptor_rules.length + 1}`, switchOn: true, key: buildUUID()});
     this.forceUpdate(this.updateAddBtnTop_interval);
   }
 
@@ -175,13 +175,13 @@ export default class Main extends Component {
                     key={key}
                     header={
                       <div className="panel-header" onClick={e => e.stopPropagation()}>
-                        <Input.Group compact style={{width: '76%'}}>
+                        <Input.Group compact style={{width: '78%'}}>
                           <Input 
-                            placeholder="备注"
-                            style={{width: '19%'}}
+                            placeholder="name"
+                            style={{width: '21%'}}
                             defaultValue={label}
                             onChange={e => this.handleLabelChange(e, i)}/>
-                          <Select defaultValue={filterType} style={{width: '32%'}} onChange={e => this.handleFilterTypeChange(e, i)}>
+                          <Select defaultValue={filterType} style={{width: '30%'}} onChange={e => this.handleFilterTypeChange(e, i)}>
                             <Option value="normal">normal</Option>
                             <Option value="regex">regex</Option>
                           </Select>
