@@ -4,15 +4,10 @@
   "description": "To modify response text of ajax requests",
   "permissions": [
     "storage",
-    "tabs",
-    "http://*/",
-    "https://*/"
+    "tabs"
   ],
   "background": {
-    "scripts": ["background.js"],
-    "persistent": true
-  },
-  "browser_action": {
+    "service_worker": "service_worker.js"
   },
   "icons": {
     "16": "images/16_gray.png",
@@ -20,18 +15,35 @@
     "48": "images/48.png",
     "128": "images/128.png"
   },
-  "manifest_version": 2,
+  "manifest_version": 3,
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["./content.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "./content.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     }
   ],
   "web_accessible_resources": [
-    "pageScripts/defaultSettings.js",
-    "pageScripts/main.js",
-    "iframe/index.html"
+    {
+      "resources": [
+        "pageScripts/defaultSettings.js",
+        "pageScripts/main.js",
+        "iframe/index.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "action": {},
+  "content_security_policy": {},
+  "host_permissions": [
+    "http://*/",
+    "https://*/"
   ]
 }
