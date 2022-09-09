@@ -21,7 +21,7 @@ let ajax_interceptor_qoweifjqon = {
         if (matched) {
           this.responseText = overrideTxt;
           this.response = overrideTxt;
-          
+
           if (!pageScriptEventDispatched) {
             window.dispatchEvent(new CustomEvent("pageScript", {
               detail: {url: this.responseURL, match}
@@ -31,7 +31,7 @@ let ajax_interceptor_qoweifjqon = {
         }
       })
     }
-    
+
     const xhr = new ajax_interceptor_qoweifjqon.originalXHR;
     for (let attr in xhr) {
       if (attr === 'onreadystatechange') {
@@ -45,6 +45,8 @@ let ajax_interceptor_qoweifjqon = {
           }
           this.onreadystatechange && this.onreadystatechange.apply(this, args);
         }
+
+        this.onreadystatechange = null;
         continue;
       } else if (attr === 'onload') {
         xhr.onload = (...args) => {
@@ -55,9 +57,11 @@ let ajax_interceptor_qoweifjqon = {
           }
           this.onload && this.onload.apply(this, args);
         }
+
+        this.onload = null;
         continue;
       }
-  
+
       if (typeof xhr[attr] === 'function') {
         this[attr] = xhr[attr].bind(xhr);
       } else {
@@ -112,7 +116,7 @@ let ajax_interceptor_qoweifjqon = {
             controller.close();
           }
         });
-  
+
         const newResponse = new Response(stream, {
           headers: response.headers,
           status: response.status,
@@ -133,13 +137,13 @@ let ajax_interceptor_qoweifjqon = {
             return target[name];
           }
         });
-  
+
         for (let key in proxy) {
           if (typeof proxy[key] === 'function') {
             proxy[key] = proxy[key].bind(newResponse);
           }
         }
-  
+
         return proxy;
       } else {
         return response;
