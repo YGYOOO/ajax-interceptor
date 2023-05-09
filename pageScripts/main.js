@@ -7,29 +7,14 @@ let ajax_interceptor_qoweifjqon = {
   },
   originalXHR: window.XMLHttpRequest,
   myXHR: function() {
-    let requestMethod = undefined;
-    function initXMLHttpRequest() {
-      let open = ajax_interceptor_qoweifjqon.originalXHR.prototype.open;
-      ajax_interceptor_qoweifjqon.originalXHR.prototype.open = function (...args) {
-        // 请求前拦截
-        modifyBefore(args)
-        return open.apply(this, args);
-      }
-    }
-    const modifyBefore = (args) => {
-      // 抛出请求的method
-      requestMethod = args[0];
-    }
-    initXMLHttpRequest()
-
     let pageScriptEventDispatched = false;
     const modifyResponse = () => {
-      ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({filterType = 'normal', limitMethod = 'ALL', switchOn = true, match, overrideTxt = ''}) => {
+      ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({filterType = 'normal', switchOn = true, match, overrideTxt = ''}) => {
         let matched = false;
         if (switchOn && match) {
-          if (filterType === 'normal' && this.responseURL.indexOf(match) > -1 && (requestMethod === limitMethod || limitMethod === 'ALL')) {
+          if (filterType === 'normal' && this.responseURL.indexOf(match) > -1) {
             matched = true;
-          } else if (filterType === 'regex' && this.responseURL.match(new RegExp(match, 'i')) && (requestMethod === limitMethod || limitMethod === 'ALL')) {
+          } else if (filterType === 'regex' && this.responseURL.match(new RegExp(match, 'i'))) {
             matched = true;
           }
         }
@@ -102,14 +87,12 @@ let ajax_interceptor_qoweifjqon = {
   myFetch: function(...args) {
     return ajax_interceptor_qoweifjqon.originalFetch(...args).then((response) => {
       let txt = undefined;
-      const requestMethod = args[1]?.method;
-      ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({filterType = 'normal', limitMethod = 'ALL', switchOn = true, match, overrideTxt = ''}) => {
+      ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({filterType = 'normal', switchOn = true, match, overrideTxt = ''}) => {
         let matched = false;
         if (switchOn && match) {
-          if (filterType === 'normal' && response.url.indexOf(match) > -1 && (requestMethod === limitMethod || limitMethod === 'ALL')) {
+          if (filterType === 'normal' && response.url.indexOf(match) > -1) {
             matched = true;
-            console.log(1)
-          } else if (filterType === 'regex' && response.url.match(new RegExp(match, 'i')) && (requestMethod === limitMethod || limitMethod === 'ALL')) {
+          } else if (filterType === 'regex' && response.url.match(new RegExp(match, 'i'))) {
             matched = true;
           }
         }
