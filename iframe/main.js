@@ -100,6 +100,13 @@ export default class Main extends Component {
     this.forceUpdateDebouce();
   }
 
+  handleLimitMethodChange = (val, i) => {
+    window.setting.ajaxInterceptor_rules[i].limitMethod = val;
+    this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
+
+    this.forceUpdate();
+  }
+
   handleFilterTypeChange = (val, i) => {
     window.setting.ajaxInterceptor_rules[i].filterType = val;
     this.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
@@ -170,24 +177,33 @@ export default class Main extends Component {
                 onChange={this.handleCollaseChange}
                 // onChangeDone={this.handleCollaseChange}
               >
-                {window.setting.ajaxInterceptor_rules.map(({filterType = 'normal', match, label, overrideTxt, switchOn = true, key}, i) => (
+                {window.setting.ajaxInterceptor_rules.map(({filterType = 'normal', limitMethod = 'ALL', match, label, overrideTxt, switchOn = true, key}, i) => (
                   <Panel
                     key={key}
                     header={
                       <div className="panel-header" onClick={e => e.stopPropagation()}>
-                        <Input.Group compact style={{width: '78%'}}>
+                        <Input.Group compact style={{width: '82%'}}>
                           <Input 
                             placeholder="name"
-                            style={{width: '21%'}}
+                            style={{width: '17%'}}
                             defaultValue={label}
                             onChange={e => this.handleLabelChange(e, i)}/>
-                          <Select defaultValue={filterType} style={{width: '30%'}} onChange={e => this.handleFilterTypeChange(e, i)}>
+                          <Select defaultValue={limitMethod} style={{width: '23%'}} onChange={e => this.handleLimitMethodChange(e, i)}>
+                            <Option value="ALL">ALL</Option>
+                            <Option value="GET">GET</Option>
+                            <Option value="POST">POST</Option>
+                            <Option value="PUT">PUT</Option>
+                            <Option value="HEAD">HEAD</Option>
+                            <Option value="DELETE">DELETE</Option>
+                            <Option value="OPTIONS">OPTIONS</Option>
+                          </Select>
+                          <Select defaultValue={filterType} style={{width: '23%'}} onChange={e => this.handleFilterTypeChange(e, i)}>
                             <Option value="normal">normal</Option>
                             <Option value="regex">regex</Option>
                           </Select>
                           <Input
                             placeholder={filterType === 'normal' ? 'eg: abc/get' : 'eg: abc.*'}
-                            style={{width: '49%'}}
+                            style={{width: '37%'}}
                             defaultValue={match}
                             // onClick={e => e.stopPropagation()}
                             onChange={e => this.handleMatchChange(e, i)}
