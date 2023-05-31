@@ -45,5 +45,6 @@
   "host_permissions": [
     "http://*/",
     "https://*/"
-  ]
+  ],
+  "devtools_page": "devtools.html"
 }

@@ -4,6 +4,7 @@ let ajax_interceptor_qoweifjqon = {
   settings: {
     ajaxInterceptor_switchOn: false,
     ajaxInterceptor_rules: [],
+    // panel_position: 0 // 0:页面悬浮面板, 1:devTools
   },
   originalXHR: window.XMLHttpRequest,
   myXHR: function() {
@@ -108,7 +109,6 @@ let ajax_interceptor_qoweifjqon = {
         if (switchOn && match) {
           if (filterType === 'normal' && response.url.indexOf(match) > -1 && (requestMethod === limitMethod || limitMethod === 'ALL')) {
             matched = true;
-            console.log(1)
           } else if (filterType === 'regex' && response.url.match(new RegExp(match, 'i')) && (requestMethod === limitMethod || limitMethod === 'ALL')) {
             matched = true;
           }

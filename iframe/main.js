@@ -161,6 +161,11 @@ export default class Main extends Component {
     this.forceUpdate();
   }
 
+  handlePanelSwitchChange = () => {
+    window.setting.panel_position = window.setting.panel_position ? 0 : 1;
+    this.set('panel_position', window.setting.panel_position);
+  }
+
   render() {
     return (
       <div className="main">
@@ -169,6 +174,16 @@ export default class Main extends Component {
           defaultChecked={window.setting.ajaxInterceptor_switchOn}
           onChange={this.handleSwitchChange}
         />
+        <div className="panel-position" style={{position: 'absolute', right: '13px', top: '20px'}}>
+          <span>浮窗</span>
+          <Switch
+            style={{zIndex: 10}}
+            defaultChecked={window.setting.panel_position}
+            onChange={this.handlePanelSwitchChange}
+            style={{margin: '0 10px'}}
+          />
+          <span>devTools</span>
+        </div>
         <div className={window.setting.ajaxInterceptor_switchOn ? 'settingBody' : 'settingBody settingBody-hidden'}>
           {window.setting.ajaxInterceptor_rules && window.setting.ajaxInterceptor_rules.length > 0 ? (
             <div ref={ref => this.collapseWrapperRef = ref}>
@@ -182,13 +197,16 @@ export default class Main extends Component {
                     key={key}
                     header={
                       <div className="panel-header" onClick={e => e.stopPropagation()}>
-                        <Input.Group compact style={{width: '82%'}}>
-                          <Input 
+                        <Input.Group compact style={{ flex: 'auto', display: 'flex' }}>
+                          <Input
                             placeholder="name"
-                            style={{width: '17%'}}
+                            style={{ width: '1px', flex: 'auto', display: 'inline-block' }}
                             defaultValue={label}
                             onChange={e => this.handleLabelChange(e, i)}/>
-                          <Select defaultValue={limitMethod} style={{width: '23%'}} onChange={e => this.handleLimitMethodChange(e, i)}>
+                          <Select
+                            defaultValue={limitMethod}
+                            style={{ width: '1px', maxWidth: '120px', flex: 'auto', display: 'inline-block' }}
+                            onChange={e => this.handleLimitMethodChange(e, i)}>
                             <Option value="ALL">ALL</Option>
                             <Option value="GET">GET</Option>
                             <Option value="POST">POST</Option>
@@ -197,31 +215,37 @@ export default class Main extends Component {
                             <Option value="DELETE">DELETE</Option>
                             <Option value="OPTIONS">OPTIONS</Option>
                           </Select>
-                          <Select defaultValue={filterType} style={{width: '23%'}} onChange={e => this.handleFilterTypeChange(e, i)}>
+                          <Select
+                            defaultValue={filterType}
+                            style={{ width: '1px', maxWidth: '120px', flex: 'auto', display: 'inline-block' }}
+                            onChange={e => this.handleFilterTypeChange(e, i)}>
                             <Option value="normal">normal</Option>
                             <Option value="regex">regex</Option>
                           </Select>
                           <Input
                             placeholder={filterType === 'normal' ? 'eg: abc/get' : 'eg: abc.*'}
-                            style={{width: '37%'}}
+                            style={{ width: '1px', flex: 'auto', display: 'inline-block' }}
                             defaultValue={match}
                             // onClick={e => e.stopPropagation()}
                             onChange={e => this.handleMatchChange(e, i)}
                           />
                         </Input.Group>
-                        <Switch
-                          size="small"
-                          defaultChecked={switchOn}
-                          onChange={val => this.handleSingleSwitchChange(val, i)}
-                        />
-                        <Button
-                          style={{marginRight: '16px'}}
-                          type="primary"
-                          shape="circle" 
-                          icon="minus"
-                          size="small"
-                          onClick={e => this.handleClickRemove(e, i)}
-                        />
+                        <div className="button-group">
+                          <Switch
+                            size="small"
+                            defaultChecked={switchOn}
+                            onChange={val => this.handleSingleSwitchChange(val, i)}
+                            style={{ width: '28px', flex: 'none', marginRight: '8px' }}
+                          />
+                          <Button
+                            type="primary"
+                            shape="circle"
+                            icon="minus"
+                            size="small"
+                            onClick={e => this.handleClickRemove(e, i)}
+                            style={{ width: '24px', flex: 'none', marginRight: '16px' }}
+                          />
+                        </div>
                       </div>
                     }
                   >
