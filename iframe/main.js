@@ -198,9 +198,9 @@ export default class Main extends Component {
   render() {
     return (
       <div className="main">
-        <div style={{textAlign: 'center'}}>
+        <div style={{textAlign: 'center', position: 'relative', zIndex: 10}}>
           <Switch
-            style={{zIndex: 10}}
+            style={{transform: 'translateX(11px)'}}
             defaultChecked={window.setting.ajaxInterceptor_switchOn}
             onChange={this.handleSwitchChange}
           />
