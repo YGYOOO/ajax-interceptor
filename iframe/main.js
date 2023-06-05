@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import 'antd/dist/antd.css';
-import {Switch, Collapse, Input, Select, Button, Badge, Tooltip} from 'antd';
+import {Switch, Collapse, Input, Select, Button, Badge, Tooltip, Icon, Modal, Radio} from 'antd';
 const Panel = Collapse.Panel;
 
 import Replacer from './Replacer';
@@ -53,6 +53,10 @@ export default class Main extends Component {
 
   state = {
     interceptedRequests: {},
+    modalVisible: false,
+    customFunction: {
+      panelPosition: 0
+    }
   }
 
   componentDidMount() {
@@ -166,23 +170,45 @@ export default class Main extends Component {
     this.set('panel_position', window.setting.panel_position);
   }
 
+  // 弹窗逻辑
+  showModal = () => {
+    this.setState({
+      modalVisible: true,
+      customFunction: window.setting.customFunction
+    });
+  };
+  handleModalSubmit = () => {
+    this.setState({modalVisible: false}, () => {
+      window.setting.customFunction = this.state.customFunction;
+      this.set('customFunction', window.setting.customFunction);
+    });
+  };
+  handleModalCancel = () => {
+    this.setState({modalVisible: false});
+  };
+  handleModalPositionChange = e => {
+    this.setState({
+      customFunction: {
+        ...this.state.customFunction,
+        panelPosition: e.target.value
+      }
+    });
+  };
+
   render() {
     return (
       <div className="main">
-        <Switch
-          style={{zIndex: 10}}
-          defaultChecked={window.setting.ajaxInterceptor_switchOn}
-          onChange={this.handleSwitchChange}
-        />
-        <div className="panel-position" style={{position: 'absolute', right: '13px', top: '20px'}}>
-          <span>浮窗</span>
+        <div style={{textAlign: 'center'}}>
           <Switch
             style={{zIndex: 10}}
-            defaultChecked={window.setting.panel_position}
-            onChange={this.handlePanelSwitchChange}
-            style={{margin: '0 10px'}}
+            defaultChecked={window.setting.ajaxInterceptor_switchOn}
+            onChange={this.handleSwitchChange}
           />
-          <span>devTools</span>
+          <Icon
+            type="setting"
+            style={{fontSize: '22px', color: '#1890ff', cursor: 'pointer', float: 'right'}}
+            onClick={this.showModal}
+          />
         </div>
         <div className={window.setting.ajaxInterceptor_switchOn ? 'settingBody' : 'settingBody settingBody-hidden'}>
           {window.setting.ajaxInterceptor_rules && window.setting.ajaxInterceptor_rules.length > 0 ? (
@@ -200,12 +226,12 @@ export default class Main extends Component {
                         <Input.Group compact style={{ flex: 'auto', display: 'flex' }}>
                           <Input
                             placeholder="name"
-                            style={{ width: '1px', flex: 'auto', display: 'inline-block' }}
+                            style={{width: '1px', flex: 'auto', display: 'inline-block'}}
                             defaultValue={label}
                             onChange={e => this.handleLabelChange(e, i)}/>
                           <Select
                             defaultValue={limitMethod}
-                            style={{ width: '1px', maxWidth: '120px', flex: 'auto', display: 'inline-block' }}
+                            style={{width: '1px', maxWidth: '120px', flex: 'auto', display: 'inline-block'}}
                             onChange={e => this.handleLimitMethodChange(e, i)}>
                             <Option value="ALL">ALL</Option>
                             <Option value="GET">GET</Option>
@@ -217,14 +243,14 @@ export default class Main extends Component {
                           </Select>
                           <Select
                             defaultValue={filterType}
-                            style={{ width: '1px', maxWidth: '120px', flex: 'auto', display: 'inline-block' }}
+                            style={{width: '1px', maxWidth: '120px', flex: 'auto', display: 'inline-block'}}
                             onChange={e => this.handleFilterTypeChange(e, i)}>
                             <Option value="normal">normal</Option>
                             <Option value="regex">regex</Option>
                           </Select>
                           <Input
                             placeholder={filterType === 'normal' ? 'eg: abc/get' : 'eg: abc.*'}
-                            style={{ width: '1px', flex: 'auto', display: 'inline-block' }}
+                            style={{width: '1px', flex: 'auto', display: 'inline-block'}}
                             defaultValue={match}
                             // onClick={e => e.stopPropagation()}
                             onChange={e => this.handleMatchChange(e, i)}
@@ -235,7 +261,7 @@ export default class Main extends Component {
                             size="small"
                             defaultChecked={switchOn}
                             onChange={val => this.handleSingleSwitchChange(val, i)}
-                            style={{ width: '28px', flex: 'none', marginRight: '8px' }}
+                            style={{width: '28px', flex: 'none', marginRight: '8px'}}
                           />
                           <Button
                             type="primary"
@@ -243,7 +269,7 @@ export default class Main extends Component {
                             icon="minus"
                             size="small"
                             onClick={e => this.handleClickRemove(e, i)}
-                            style={{ width: '24px', flex: 'none', marginRight: '16px' }}
+                            style={{width: '24px', flex: 'none', marginRight: '16px'}}
                           />
                         </div>
                       </div>
@@ -315,6 +341,34 @@ export default class Main extends Component {
             />
           </div>
         </div>
+        <Modal
+          visible={this.state.modalVisible}
+          title="Settings"
+          width="400px"
+          onCancel={this.handleModalCancel}
+          footer={[
+            <Button key="Cancel" onClick={this.handleModalCancel}>
+              Return
+            </Button>,
+            <Button key="Submit" type="primary" onClick={this.handleModalSubmit}>
+              Submit
+            </Button>,
+          ]}
+        >
+          <div>
+            <span>Position:</span>
+            <Radio.Group
+              onChange={this.handleModalPositionChange} value={this.state.customFunction.panelPosition}
+              style={{marginLeft: '20px'}}
+            >
+              <Radio value={0}>Suspend(Default)</Radio>
+              <Radio value={1}>Devtools</Radio>
+            </Radio.Group>
+          </div>
+          <div style={{ color: '#1890ff', 'lineHeight': '16px', 'marginTop': '16px' }}>
+            Please refresh the page and reopen the devtools after submitting.
+          </div>
+        </Modal>
       </div>
     );
   }

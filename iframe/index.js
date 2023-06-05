@@ -6,11 +6,13 @@ import Main from './Main';
 const DEFAULT_SETTING = {
   ajaxInterceptor_switchOn: false,
   ajaxInterceptor_rules: [],
-  panel_position: 0 // 0:页面悬浮面板, 1:devTools
+  customFunction: {
+    panelPosition: 0,  // 0:页面悬浮面板, 1:devTools
+  }
 }
 
 if (chrome.storage) {
-  chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules', 'panel_position'], (result) => {
+  chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules', 'customFunction'], (result) => {
     // if (result.ajaxInterceptor_switchOn) {
     //   this.set('ajaxInterceptor_switchOn', result.ajaxInterceptor_switchOn, false);
     // }

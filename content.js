@@ -28,8 +28,8 @@ script.addEventListener('load', () => {
 
 let iframe;
 let iframeLoaded = false;
-chrome.storage.local.get(['panel_position'], (result) => {
-  if (!result.panel_position) {
+chrome.storage.local.get(['customFunction'], (result) => {
+  if (!result.customFunction?.panelPosition) {
     insertIframe()
   }
 });
