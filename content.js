@@ -38,7 +38,7 @@ chrome.storage.local.get(['customFunction'], (result) => {
 function insertIframe() {
   if (window.self === window.top) {
     document.onreadystatechange = () => {
-      if (document.readyState === 'complete') {
+      if (document.readyState === 'interactive') {
         iframe = document.createElement('iframe');
         iframe.className = "api-interceptor";
         iframe.style.setProperty('height', '100%', 'important');
