@@ -1,14 +1,14 @@
 #main {
   display: flex;
   justify-content: center;
+  overflow: auto;
 }
 .main {
   text-align: center;
-  overflow-y: auto;
   padding: 20px 13px 60px 13px;
   width: 100%;
   height: 100%;
-  max-width: 850px;
+  max-width: 800px;
   background: white;
 }
 .settingBody {
@@ -56,7 +56,7 @@
   align-items: center;
   justify-content: flex-end;
   flex: none;
-  margin: 0 16px;
+  margin: 0 10px;
 }
 .wrapper-btn-add {
   position: absolute;
@@ -112,4 +112,27 @@
     -webkit-transform: perspective(450px);
     transform: perspective(450px);
   }
+}
+
+.radio-icon {
+  font-size: 14px;
+  margin-left: 4px;
+  cursor: pointer;
+}
+.position-image {
+  width: 486px;
+  height: 365px;
+}
+.position-title {
+  margin-bottom: 10px;
+}
+.image-suspend {
+  background-image: url("./images/position_suspend.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.image-devtools {
+  background-image: url("./images/position_devtools.png");
+  background-repeat: no-repeat;
+  background-size: contain;
 }

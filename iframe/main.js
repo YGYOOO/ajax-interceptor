@@ -53,7 +53,9 @@ export default class Main extends Component {
 
   state = {
     interceptedRequests: {},
-    modalVisible: false,
+    settingModalVisible: false,
+    imageModalVisible: false,
+    positionClass: 'suspend',
     customFunction: {
       panelPosition: 0
     }
@@ -171,28 +173,37 @@ export default class Main extends Component {
   }
 
   // 弹窗逻辑
-  showModal = () => {
+  showSettingModal = () => {
     this.setState({
-      modalVisible: true,
+      settingModalVisible: true,
       customFunction: window.setting.customFunction
     });
   };
-  handleModalSubmit = () => {
-    this.setState({modalVisible: false}, () => {
+  handleSettingModalSubmit = () => {
+    this.setState({settingModalVisible: false}, () => {
       window.setting.customFunction = this.state.customFunction;
       this.set('customFunction', window.setting.customFunction);
     });
   };
-  handleModalCancel = () => {
-    this.setState({modalVisible: false});
+  handleSettingModalCancel = () => {
+    this.setState({settingModalVisible: false});
   };
-  handleModalPositionChange = e => {
+  handlePositionChange = e => {
     this.setState({
       customFunction: {
         ...this.state.customFunction,
         panelPosition: e.target.value
       }
     });
+  };
+  showImageModal = (pClass) => {
+    this.setState({
+      imageModalVisible: true,
+      positionClass: pClass
+    });
+  };
+  handleImageModalClose = () => {
+    this.setState({imageModalVisible: false});
   };
 
   render() {
@@ -207,7 +218,7 @@ export default class Main extends Component {
           <Icon
             type="setting"
             style={{fontSize: '22px', color: '#1890ff', cursor: 'pointer', float: 'right'}}
-            onClick={this.showModal}
+            onClick={this.showSettingModal}
           />
         </div>
         <div className={window.setting.ajaxInterceptor_switchOn ? 'settingBody' : 'settingBody settingBody-hidden'}>
@@ -226,12 +237,12 @@ export default class Main extends Component {
                         <Input.Group compact style={{ flex: 'auto', display: 'flex' }}>
                           <Input
                             placeholder="name"
-                            style={{width: '1px', maxWidth: '150px', flex: 'auto', display: 'inline-block'}}
+                            style={{width: '1px', maxWidth: '120px', flex: 'auto', display: 'inline-block'}}
                             defaultValue={label}
                             onChange={e => this.handleLabelChange(e, i)}/>
                           <Select
                             defaultValue={limitMethod}
-                            style={{width: '1px', maxWidth: '120px', flex: 'auto', display: 'inline-block'}}
+                            style={{width: '1px', maxWidth: '120px', flex: '1.5 1 auto', display: 'inline-block'}}
                             onChange={e => this.handleLimitMethodChange(e, i)}>
                             <Option value="ALL">ALL</Option>
                             <Option value="GET">GET</Option>
@@ -243,14 +254,14 @@ export default class Main extends Component {
                           </Select>
                           <Select
                             defaultValue={filterType}
-                            style={{width: '1px', maxWidth: '120px', flex: 'auto', display: 'inline-block'}}
+                            style={{width: '1px', maxWidth: '120px', flex: '1.5 1 auto', display: 'inline-block'}}
                             onChange={e => this.handleFilterTypeChange(e, i)}>
                             <Option value="normal">normal</Option>
                             <Option value="regex">regex</Option>
                           </Select>
                           <Input
                             placeholder={filterType === 'normal' ? 'eg: abc/get' : 'eg: abc.*'}
-                            style={{width: '1px', flex: 'auto', display: 'inline-block'}}
+                            style={{width: '1px', flex: '1.5 1 auto', display: 'inline-block'}}
                             defaultValue={match}
                             // onClick={e => e.stopPropagation()}
                             onChange={e => this.handleMatchChange(e, i)}
@@ -342,15 +353,15 @@ export default class Main extends Component {
           </div>
         </div>
         <Modal
-          visible={this.state.modalVisible}
+          visible={this.state.settingModalVisible}
           title="Settings"
-          width="400px"
-          onCancel={this.handleModalCancel}
+          width="410px"
+          onCancel={this.handleSettingModalCancel}
           footer={[
-            <Button key="Cancel" onClick={this.handleModalCancel}>
-              Return
+            <Button key="Cancel" onClick={this.handleSettingModalCancel}>
+              Cancel
             </Button>,
-            <Button key="Submit" type="primary" onClick={this.handleModalSubmit}>
+            <Button key="Submit" type="primary" onClick={this.handleSettingModalSubmit}>
               Submit
             </Button>,
           ]}
@@ -358,15 +369,37 @@ export default class Main extends Component {
           <div>
             <span>Position:</span>
             <Radio.Group
-              onChange={this.handleModalPositionChange} value={this.state.customFunction.panelPosition}
+              onChange={this.handlePositionChange} value={this.state.customFunction.panelPosition}
               style={{marginLeft: '20px'}}
             >
-              <Radio value={0}>Suspend(Default)</Radio>
-              <Radio value={1}>Devtools</Radio>
+              <Radio value={0}>
+                <span>Suspend(Default)</span>
+                <Icon type="question-circle" className="radio-icon" onClick={() => this.showImageModal("suspend")}/>
+              </Radio>
+              <Radio value={1}>
+                <span>Devtools</span>
+                <Icon type="question-circle" className="radio-icon" onClick={() => this.showImageModal("devtools")}/>
+              </Radio>
             </Radio.Group>
           </div>
           <div style={{ color: '#1890ff', 'lineHeight': '16px', 'marginTop': '16px' }}>
             Please refresh the page and reopen the devtools after submitting.
+          </div>
+        </Modal>
+        <Modal
+          visible={this.state.imageModalVisible}
+          onCancel={this.handleImageModalClose}
+          footer={null}
+          mask={false}
+          closable={false}
+          width="502px"
+          bodyStyle={{padding: '8px'}}
+        >
+          <div onClick={this.handleImageModalClose}>
+            <div className="position-title">
+              {this.state.positionClass === 'suspend' ? 'Suspend(Default)' : 'Devtools'} Position Example:
+            </div>
+            <div className={`position-image image-${this.state.positionClass}`}></div>
           </div>
         </Modal>
       </div>

@@ -4,7 +4,8 @@ module.exports = {
   entry: './index.js',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname)
+    path: path.resolve(__dirname),
+    publicPath: './'
   },
   mode: 'production',
   module: {
@@ -47,6 +48,14 @@ module.exports = {
       use: [{
         loader: 'svg-loader',
       }]
+    }, {
+      test: /\.(png|jpg|jpeg|gif)$/,
+      use: {
+        loader: 'file-loader',
+        options: {
+          esModule: false
+        }
+      }
     }]
   },
   devServer: {

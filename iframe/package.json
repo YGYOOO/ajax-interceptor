@@ -13,6 +13,7 @@
     "@babel/plugin-proposal-class-properties": "^7.3.0",
     "antd": "^3.13.1",
     "css-loader": "^2.1.1",
+    "file-loader": "^6.2.0",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "postcss-loader": "^3.0.0",
