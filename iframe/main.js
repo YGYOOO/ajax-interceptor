@@ -226,7 +226,7 @@ export default class Main extends Component {
                         <Input.Group compact style={{ flex: 'auto', display: 'flex' }}>
                           <Input
                             placeholder="name"
-                            style={{width: '1px', flex: 'auto', display: 'inline-block'}}
+                            style={{width: '1px', maxWidth: '150px', flex: 'auto', display: 'inline-block'}}
                             defaultValue={label}
                             onChange={e => this.handleLabelChange(e, i)}/>
                           <Select
@@ -269,7 +269,7 @@ export default class Main extends Component {
                             icon="minus"
                             size="small"
                             onClick={e => this.handleClickRemove(e, i)}
-                            style={{width: '24px', flex: 'none', marginRight: '16px'}}
+                            style={{width: '24px', flex: 'none'}}
                           />
                         </div>
                       </div>
