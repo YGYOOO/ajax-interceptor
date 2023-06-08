@@ -1,7 +1,7 @@
 let contentLoadedIds = []
 chrome.scripting
   .registerContentScripts([{
-    id: "testing-scripts-gen",
+    id: "testing-scripts-gen" + Math.random(),
     js: ['./content.js'],
     matches: ['<all_urls>'],
     runAt: "document_start",
