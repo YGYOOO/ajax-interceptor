@@ -397,7 +397,7 @@ export default class Main extends Component {
         >
           <div onClick={this.handleImageModalClose}>
             <div className="position-title">
-              {this.state.positionClass === 'suspend' ? 'Suspend(Default)' : 'Devtools'} Position Example:
+              Example of {this.state.positionClass === 'suspend' ? 'Suspend(Default)' : 'Devtools'} Position:
             </div>
             <div className={`position-image image-${this.state.positionClass}`}></div>
           </div>

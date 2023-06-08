@@ -1,13 +1,33 @@
-
+let contentLoadedIds = []
+chrome.scripting
+  .registerContentScripts([{
+    id: "testing-scripts-gen",
+    js: ['./content.js'],
+    matches: ['<all_urls>'],
+    runAt: "document_start",
+    allFrames: true
+  }])
 chrome.action.onClicked.addListener(function(tab) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-    chrome.tabs.sendMessage(tabs[0].id, "toggle");
+    if (contentLoadedIds.includes(tabs[0].id)) {
+      chrome.tabs.sendMessage(tabs[0].id, "toggle");
+    } else {
+      chrome.scripting.executeScript({
+        target: {tabId: tabs[0].id, allFrames: true},
+        files: ['content.js']
+      }).then(() => chrome.tabs.sendMessage(tabs[0].id, "toggle"));
+    }
   })
 });
 
 // 接收iframe传来的信息，转发给content.js
 chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'ajaxInterceptor' && msg.to === 'background') {
+    if (msg.hasOwnProperty('contentScriptLoaded')) {
+      msg.contentScriptLoaded && chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+        contentLoadedIds.push(tabs[0].id)
+      })
+    }
     if (msg.key === 'ajaxInterceptor_switchOn') {
       if (msg.value === true) {
         chrome.action.setIcon({path: {

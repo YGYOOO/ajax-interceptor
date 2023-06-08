@@ -1,10 +1,11 @@
 {
   "name": "Ajax Interceptor",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "To modify response text of ajax requests",
   "permissions": [
     "storage",
-    "tabs"
+    "tabs",
+    "scripting"
   ],
   "background": {
     "service_worker": "service_worker.js"
@@ -16,18 +17,6 @@
     "128": "images/128.png"
   },
   "manifest_version": 3,
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "./content.js"
-      ],
-      "run_at": "document_start",
-      "all_frames": true
-    }
-  ],
   "web_accessible_resources": [
     {
       "resources": [

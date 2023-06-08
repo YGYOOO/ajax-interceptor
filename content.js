@@ -30,44 +30,46 @@ let iframe;
 let iframeLoaded = false;
 chrome.storage.local.get(['customFunction'], (result) => {
   if (!result.customFunction?.panelPosition) {
-    insertIframe()
+    if (['complete', 'interactive'].includes(document.readyState)) {
+      insertIframe()
+    } else {
+      document.onreadystatechange = () => {
+        if (document.readyState === 'interactive') {
+          insertIframe()
+        }
+      }
+    }
   }
 });
 
 // 只在最顶层页面嵌入iframe
 function insertIframe() {
   if (window.self === window.top) {
-    document.onreadystatechange = () => {
-      if (document.readyState === 'interactive') {
-        iframe = document.createElement('iframe');
-        iframe.className = "api-interceptor";
-        iframe.style.setProperty('height', '100%', 'important');
-        iframe.style.setProperty('width', '518px', 'important');
-        iframe.style.setProperty('min-width', '1px', 'important');
-        iframe.style.setProperty('position', 'fixed', 'important');
-        iframe.style.setProperty('top', '0', 'important');
-        iframe.style.setProperty('right', '0', 'important');
-        iframe.style.setProperty('left', 'auto', 'important');
-        iframe.style.setProperty('bottom', 'auto', 'important');
-        iframe.style.setProperty('z-index', '9999999999999', 'important');
-        iframe.style.setProperty('transform', 'translateX(538px)', 'important');
-        iframe.style.setProperty('transition', 'all .4s', 'important');
-        iframe.style.setProperty('box-shadow', '0 0 15px 2px rgba(0,0,0,0.12)', 'important');
-        iframe.frameBorder = "none";
-        iframe.src = chrome.runtime.getURL("iframe/index.html")
-        document.body.appendChild(iframe);
-        let show = false;
-
-        chrome.runtime.onMessage.addListener((msg, sender) => {
-          if (msg == 'toggle') {
-            show = !show;
-            iframe.style.setProperty('transform', show ? 'translateX(0)' : 'translateX(538px)', 'important');
-          }
-
-          return true;
-        });
+    iframe = document.createElement('iframe');
+    iframe.className = "api-interceptor";
+    iframe.style.setProperty('height', '100%', 'important');
+    iframe.style.setProperty('width', '518px', 'important');
+    iframe.style.setProperty('min-width', '1px', 'important');
+    iframe.style.setProperty('position', 'fixed', 'important');
+    iframe.style.setProperty('top', '0', 'important');
+    iframe.style.setProperty('right', '0', 'important');
+    iframe.style.setProperty('left', 'auto', 'important');
+    iframe.style.setProperty('bottom', 'auto', 'important');
+    iframe.style.setProperty('z-index', '9999999999999', 'important');
+    iframe.style.setProperty('transform', 'translateX(538px)', 'important');
+    iframe.style.setProperty('transition', 'all .4s', 'important');
+    iframe.style.setProperty('box-shadow', '0 0 15px 2px rgba(0,0,0,0.12)', 'important');
+    iframe.frameBorder = "none";
+    iframe.src = chrome.runtime.getURL("iframe/index.html")
+    document.body.appendChild(iframe);
+    let show = false;
+    chrome.runtime.onMessage.addListener((msg, sender) => {
+      if (msg == 'toggle') {
+        show = !show;
+        iframe.style.setProperty('transform', show ? 'translateX(0)' : 'translateX(538px)', 'important');
       }
-    }
+      return true;
+    });
   }
 }
 
@@ -75,8 +77,8 @@ function insertIframe() {
 // 接收background.js传来的信息，转发给pageScript
 chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'ajaxInterceptor' && msg.to === 'content') {
-    if (msg.hasOwnProperty('iframeScriptLoaded')) {
-      if (msg.iframeScriptLoaded) iframeLoaded = true;
+    if (msg.hasOwnProperty('iframeScriptLoadedId')) {
+      iframeLoaded = true;
     } else {
       postMessage({...msg, to: 'pageScript'});
     }
@@ -113,3 +115,4 @@ window.addEventListener("pageScript", function(event) {
 // s.innerText = `console.log('test')`;
 // document.documentElement.appendChild(s);
 
+chrome.runtime.sendMessage(chrome.runtime.id, {type: 'ajaxInterceptor', to: 'background', contentScriptLoaded: true});
