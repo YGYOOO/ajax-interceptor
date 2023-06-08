@@ -77,8 +77,8 @@ function insertIframe() {
 // 接收background.js传来的信息，转发给pageScript
 chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'ajaxInterceptor' && msg.to === 'content') {
-    if (msg.hasOwnProperty('iframeScriptLoadedId')) {
-      iframeLoaded = true;
+    if (msg.hasOwnProperty('iframeScriptLoaded')) {
+      if (msg.iframeScriptLoaded) iframeLoaded = true;
     } else {
       postMessage({...msg, to: 'pageScript'});
     }
