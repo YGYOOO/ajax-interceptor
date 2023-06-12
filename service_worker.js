@@ -1,12 +1,23 @@
 let contentLoadedIds = []
-chrome.scripting
-  .registerContentScripts([{
-    id: "testing-scripts-gen" + Math.random(),
-    js: ['./content.js'],
-    matches: ['<all_urls>'],
-    runAt: "document_start",
-    allFrames: true
-  }])
+
+chrome.scripting.getRegisteredContentScripts({ ids: ["testing-scripts-gen"] },
+  async (scripts) => {
+    if (scripts && scripts.length) {
+      await chrome.scripting.unregisterContentScripts({
+        ids: ["testing-scripts-gen"]
+      })
+    }
+    chrome.scripting
+      .registerContentScripts([{
+        id: "testing-scripts-gen",
+        js: ['./content.js'],
+        matches: ['<all_urls>'],
+        runAt: "document_start",
+        allFrames: true
+      }])
+  }
+)
+
 chrome.action.onClicked.addListener(function(tab) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
     if (contentLoadedIds.includes(tabs[0].id)) {
