@@ -68,7 +68,7 @@ function insertIframe() {
         show = !show;
         iframe.style.setProperty('transform', show ? 'translateX(0)' : 'translateX(538px)', 'important');
       }
-      return true;
+      return Promise.resolve("Dummy response to keep the console quiet");
     });
   }
 }
