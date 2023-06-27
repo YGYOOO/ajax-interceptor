@@ -36,7 +36,7 @@ chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'ajaxInterceptor' && msg.to === 'background') {
     if (msg.hasOwnProperty('contentScriptLoaded')) {
       msg.contentScriptLoaded && chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-        contentLoadedIds.push(tabs[0].id)
+        tabs && tabs.length && contentLoadedIds.push(tabs[0].id)
       })
     }
     if (msg.key === 'ajaxInterceptor_switchOn') {
@@ -57,7 +57,11 @@ chrome.runtime.onMessage.addListener(msg => {
       }
     }
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-      chrome.tabs.sendMessage(tabs[0].id, {...msg, to: 'content'});
+      if (tabs && tabs.length) {
+        chrome.tabs.sendMessage(tabs[0].id, {...msg, to: 'content'});
+      } else {
+        console.warn("[Ajax Interceptor] Please refresh your page on the webpage instead of devtools.")
+      }
     })
   }
 });
