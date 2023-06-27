@@ -28,5 +28,5 @@ Example video：https://www.youtube.com/watch?v=OL87EPOEVIU
 version 1.4.1:
 - add feature of matched methods  
 - add setting of panel positions, including suspended position and devtools position
-- support auto insert for first time users
+- optimize the user experience for new users
 - fix listener rejected error
