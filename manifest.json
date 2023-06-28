@@ -1,7 +1,7 @@
 {
-  "name": "Ajax Interceptor",
-  "version": "1.4.1",
-  "description": "To modify response text of ajax requests",
+  "name": "Ajax Modifier",
+  "version": "1.4.2",
+  "description": "To modify ajax requests on any page",
   "permissions": [
     "storage",
     "tabs",

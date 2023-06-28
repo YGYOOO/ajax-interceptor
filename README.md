@@ -1,6 +1,6 @@
 English | [简体中文](./README-zh.md)   
 
-<img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/icon.png" width="300">   
+<img src="https://github.com/YGYOOO/ajax-interceptor/raw/master/readmeImgs/Ajax_Modifier.png" width="300">   
 
 [![](https://img.shields.io/chrome-web-store/v/nhpjggchkhnlbgdfcbgpdpkifemomkpg.svg?logo=Google%20Chrome&logoColor=white&color=blue&style=flat-square)](https://chrome.google.com/webstore/detail/ajax-interceptor/nhpjggchkhnlbgdfcbgpdpkifemomkpg) 
 [![](https://img.shields.io/chrome-web-store/stars/nhpjggchkhnlbgdfcbgpdpkifemomkpg.svg?logo=Google%20Chrome&logoColor=white&color=blue&style=flat-square)](https://chrome.google.com/webstore/detail/nhpjggchkhnlbgdfcbgpdpkifemomkpg) 

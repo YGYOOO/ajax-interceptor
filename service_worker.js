@@ -60,7 +60,7 @@ chrome.runtime.onMessage.addListener(msg => {
       if (tabs && tabs.length) {
         chrome.tabs.sendMessage(tabs[0].id, {...msg, to: 'content'});
       } else {
-        console.warn("[Ajax Interceptor] Please refresh your page on the webpage instead of devtools.")
+        console.warn("[Ajax Modifier] Please refresh your page on the webpage instead of devtools.")
       }
     })
   }
