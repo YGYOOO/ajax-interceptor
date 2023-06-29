@@ -21,8 +21,9 @@ https://chrome.google.com/webstore/detail/ajax-interceptor/nhpjggchkhnlbgdfcbgpd
 Example video：https://www.youtube.com/watch?v=OL87EPOEVIU
 
 ## Notes
-1. It is recommended to turn off this extension(the icon should be gray) when you are not using it.
-2. This extension only overrides the response data in the XMLHTTPRequest object as well as the fetch method. The "original" response which you can see in DevTools' "Network" panel will not be changed.
+1. It is recommended to disable cache(devtools -> network -> disable cache) ![image](https://github.com/YGYOOO/ajax-interceptor/assets/15754991/ea89f065-56da-4c1b-8287-92fe88faeba3) when using this chrome extension.
+2. It is recommended to turn off this extension<img width="202" alt="image" src="https://github.com/YGYOOO/ajax-interceptor/assets/15754991/ba83ac30-39e5-46c6-9c04-2989e9819120"> when you are not using it.
+3. This extension only overrides the response data in the XMLHTTPRequest object as well as the fetch method. The "original" response which you can see in DevTools' "Network" panel will not be changed.
 
 ## Release Notes
 version 1.4.1:
