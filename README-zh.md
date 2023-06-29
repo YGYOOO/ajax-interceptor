@@ -24,8 +24,9 @@ chrome商店地址（推荐，自动更新。需翻墙）：https://chrome.googl
 
 
 ## 注意
-1. 当你不需要使用该插件时，建议把开关关上（插件icon变为灰色），以免对页面正常浏览造成影响。
-2. 该插件只会在JS层面上对返回结果进行修改，即只会修改全局的XMLHTTPRequest对象和fetch方法里的返回值，进而影响页面展现。而你在chrome的devtools的network里看到的请求返回结果不会有任何变化。
+1. 使用该插件时，建议关闭浏览器缓存（devtools -> network -> disable cache）![image](https://github.com/YGYOOO/ajax-interceptor/assets/15754991/ddac6f23-dbdf-4234-881f-60bb36178d67) ，以提高拦截ajax请求的成功率。
+2. 当你不需要使用该插件时，建议把开关关上（插件icon变为灰色），以免对页面正常浏览造成影响。
+3. 该插件只会在JS层面上对返回结果进行修改，即只会修改全局的XMLHTTPRequest对象和fetch方法里的返回值，进而影响页面展现。而你在chrome的devtools的network里看到的请求返回结果不会有任何变化。
 
 
 ## 更新说明
