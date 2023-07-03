@@ -1,62 +1,62 @@
 const path = require('path');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = {
-  entry: './index.js',
+  entry: './main/index.js',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname),
-    publicPath: './'
+    path: path.join(__dirname, "./dist"),
+    publicPath: './dist/',
   },
   mode: 'production',
   module: {
-    rules: [{
-      test: /\.tsx?$/,
-      include: [
-        path.resolve(__dirname, 'source'),
-      ],
-      use: [{
-        loader: 'babel-loader'
-      },{
-        loader: 'ts-loader'
-      }]
-    }, {
-      test: /\.jsx?$/,
-      use: [{
-        loader: 'babel-loader',
-        options: {
-          cacheDirectory: true
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "babel-loader",
+          },
+        ],
+      },
+      {
+        test: /\.less$/,
+        include: path.resolve(__dirname, './main'),
+        use: [{
+          loader: 'style-loader'
+        }, {
+          loader: 'css-loader?',
+        }, {
+          loader: 'less-loader?'
+        }],
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.svg?$/,
+        use: [{
+          loader: 'svg-loader',
+        }]
+      },
+      {
+        test: /\.(png|jpg|jpeg|gif)$/,
+        use: {
+          loader: 'file-loader',
+          options: {
+            esModule: false
+          }
         }
+      },
+      {
+        test: /\.ttf$/,
+        type: 'asset/resource'
       }]
-    }, {
-      test: /\.css$/,
-      use: [{
-        loader: 'style-loader'
-      }, {
-        loader: 'css-loader?'
-      }]
-    }, {
-      test: /\.less$/,
-      use: [{
-        loader: 'style-loader'
-      }, {
-        loader: 'css-loader?'
-      }, {
-        loader: 'less-loader?'
-      }]
-    }, {
-      test: /\.svg?$/,
-      use: [{
-        loader: 'svg-loader',
-      }]
-    }, {
-      test: /\.(png|jpg|jpeg|gif)$/,
-      use: {
-        loader: 'file-loader',
-        options: {
-          esModule: false
-        }
-      }
-    }]
+  },
+  resolve: {
+    extensions: [".js", ".json"],
   },
   devServer: {
     contentBase: __dirname,
@@ -64,5 +64,10 @@ module.exports = {
     port: 9001,
     host: 'localhost',
     hot: true,
-  }
+  },
+  plugins: [
+    new MonacoWebpackPlugin({
+      languages: ["json", "javascript", "typescript"],
+    }),
+  ]
 };

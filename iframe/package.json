@@ -4,6 +4,7 @@
   "description": "",
   "main": "popup.js",
   "scripts": {
+    "start": "webpack serve --hot --inline --progress --port 8887",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
   },
@@ -21,16 +22,19 @@
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-json-view": "^1.19.1",
+    "react-monaco-editor": "^0.41.2",
     "style-loader": "^0.23.1",
     "svg-loader": "0.0.2",
-    "webpack": "^4.29.6"
+    "webpack": "^5.85.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
-    "webpack-cli": "^3.2.3",
-    "webpack-dev-server": "^3.1.14"
+    "monaco-editor-webpack-plugin": "^7.0.1",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^3.11.2"
   }
 }

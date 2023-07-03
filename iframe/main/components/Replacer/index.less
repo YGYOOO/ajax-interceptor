@@ -1,0 +1,51 @@
+.replace-with {
+  margin-bottom: 6px;
+  text-align: left;
+  font-weight: 500;
+}
+.overrideTxt {
+  resize: none;
+  height: 100px;
+  font-variant: tabular-nums;
+  font-feature-settings: 'tnum';
+  box-sizing: border-box;
+  margin: 0;
+  list-style: none;
+  position: relative;
+  display: inline-block;
+  padding: 4px 11px;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.65);
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+}
+.overrideTxt:focus {
+  border-color: #40a9ff;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  border-right-width: 1px !important;
+}
+.overrideTxt:hover {
+  border-color: #40a9ff;
+  border-right-width: 1px !important;
+}
+.overrideTxt::-webkit-input-placeholder {
+  color: hsv(0, 0, 75%);
+}
+.JSONEditor {
+  text-align: left;
+  height: 300px;
+  margin-top: 15px;
+  overflow: auto;
+  width: calc(100% + 10px);
+}
+.Invalid {
+  text-align: center;
+  color: rgb(168, 168, 168);
+  font-size: 12px;
+}

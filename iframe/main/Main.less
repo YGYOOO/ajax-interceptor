@@ -1,0 +1,139 @@
+#main {
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+}
+.ajax-modifier-main {
+  text-align: center;
+  padding: 20px 13px 60px 13px;
+  width: 100%;
+  height: 100%;
+  max-width: 800px;
+  background: white;
+}
+.setting-body {
+  position: relative;
+  transition: all .5s;
+  padding-top: 15px;
+}
+.setting-body-hidden {
+  transform: translateY(calc(-100% + 15px));
+}
+.collapse {
+  transition: all .6s;
+  margin-bottom: 10px;
+}
+.collapse-hidden {
+  transform: translateY(-100px);
+  opacity: 0;
+}
+.intercepted-requests {
+  margin-bottom: 6px;
+  margin-top: 7px;
+  text-align: left;
+  font-weight: 500;
+}
+.intercepted {
+  text-align: left;
+}
+.intercepted > span {
+  width: 100%;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.url {
+  vertical-align: top;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.button-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: none;
+  margin: 0 10px;
+}
+.wrapper-btn-add {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  transition: top .2s;
+}
+.btn-add {
+  transition: transform .5s;
+  transition-delay: .1s;
+}
+.btn-add-hidden {
+  transform: rotate(-135deg);
+}
+
+
+.ant-collapse-item {
+  animation-duration: 0.5s;
+  backface-visibility: visible !important;
+  animation-name: flipInX;
+}
+
+@keyframes flipInX {
+  from {
+    -webkit-transform: perspective(450px) rotate3d(1, 0, 0, 90deg);
+    transform: perspective(450px) rotate3d(1, 0, 0, 90deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+    opacity: 0;
+  }
+
+  40% {
+    -webkit-transform: perspective(450px) rotate3d(1, 0, 0, -20deg);
+    transform: perspective(450px) rotate3d(1, 0, 0, -20deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+  }
+
+  60% {
+    -webkit-transform: perspective(450px) rotate3d(1, 0, 0, 10deg);
+    transform: perspective(450px) rotate3d(1, 0, 0, 10deg);
+    opacity: 1;
+  }
+
+  80% {
+    -webkit-transform: perspective(450px) rotate3d(1, 0, 0, -5deg);
+    transform: perspective(450px) rotate3d(1, 0, 0, -5deg);
+  }
+
+  to {
+    -webkit-transform: perspective(450px);
+    transform: perspective(450px);
+  }
+}
+
+.radio-icon {
+  font-size: 14px;
+  margin-left: 4px;
+  cursor: pointer;
+}
+.position-image {
+  width: 486px;
+  height: 365px;
+}
+.position-title {
+  margin-bottom: 10px;
+}
+.image-suspend {
+  background-image: url("./images/position_suspend.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.image-devtools {
+  background-image: url("./images/position_devtools.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
