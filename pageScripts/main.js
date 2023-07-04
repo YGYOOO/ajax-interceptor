@@ -2,7 +2,7 @@
 let ajax_interceptor_qoweifjqon = {
   settings: {
     ajaxInterceptor_switchOn: false,
-    // ajaxInterceptor_always200On: true,
+    ajaxInterceptor_always200On: true,
     ajaxInterceptor_rules: [],
   },
   getMatchedItem: ({ thisRequestUrl = '', thisMethod = '' }) => {
@@ -47,9 +47,9 @@ let ajax_interceptor_qoweifjqon = {
           }));
           pageScriptEventDispatched = true;
         }
-        // if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_always200On && this.status !== 200) {
-        //   this.status = 200;
-        // }
+        if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_always200On && this.status !== 200) {
+          this.status = 200;
+        }
       }
     }
 
@@ -126,7 +126,6 @@ let ajax_interceptor_qoweifjqon = {
               try {
                 const func = (new Function("...args", matchedInterface.overrideFunc));
                 args = func(...args)
-                console.log(args)
               } catch (e) {
                 console.log('error', e)
               }
@@ -142,8 +141,7 @@ let ajax_interceptor_qoweifjqon = {
         this[attr] = xhr[attr].bind(xhr);
       } else {
         // responseText和response不是writeable的，但拦截时需要修改它，所以修改就存储在this[`_${attr}`]上
-        // if (['responseText', 'response', 'status'].includes(attr)) {
-        if (attr === 'responseText' || attr === 'response') {
+        if (['responseText', 'response', 'status'].includes(attr)) {
           Object.defineProperty(this, attr, {
             get: () => this[`_${attr}`] == undefined ? xhr[attr] : this[`_${attr}`],
             set: (val) => this[`_${attr}`] = val,
