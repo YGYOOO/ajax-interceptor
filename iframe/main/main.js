@@ -5,7 +5,6 @@ import { Switch, Collapse, Input, Select, Button, Badge, Tooltip, Icon, Modal, R
 const Panel = Collapse.Panel;
 
 import Replacer from './components/Replacer'
-import SpecializedEditor from './components/SpecializedEditor';
 
 import './Main.less';
 
@@ -73,7 +72,6 @@ export default class Main extends Component {
 
 
   updateAddBtnTop = () => {
-    console.log(this.addBtnRef, this.addBtnRef.style)
     let curCollapseWrapperHeight = this.collapseWrapperRef ? this.collapseWrapperRef.offsetHeight : 0;
     if (this.collapseWrapperHeight !== curCollapseWrapperHeight) {
       this.collapseWrapperHeight = curCollapseWrapperHeight;
@@ -247,6 +245,7 @@ export default class Main extends Component {
                                                              match,
                                                              label,
                                                              overrideTxt,
+                                                             overrideFunc,
                                                              switchOn = true,
                                                              key
                                                            }, i) => (
@@ -307,6 +306,7 @@ export default class Main extends Component {
                     }
                   >
                     <Replacer
+                      defaultFunc={overrideFunc}
                       defaultValue={overrideTxt}
                       updateAddBtnTop={this.updateAddBtnTop}
                       index={i}
@@ -375,7 +375,6 @@ export default class Main extends Component {
             />
           </div>
         </div>
-        <SpecializedEditor/>
         <Modal
           visible={this.state.settingModalVisible}
           title="Settings"

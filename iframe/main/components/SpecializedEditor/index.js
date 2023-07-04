@@ -6,9 +6,13 @@ export default class SpecializedEditor extends Component {
     return (
       <>
         <div className="replace-with">
-          {/*Replace With:*/}
+          Replace With:
         </div>
-        <MonacoEditor/>
+        <MonacoEditor
+          updateAddBtnTop={this.props.updateAddBtnTop}
+          index={this.props.index}
+          defaultFunc={this.props.defaultFunc}
+        />
       </>
     );
   }

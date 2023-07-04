@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Switch } from 'antd';
+import { Switch, Radio } from 'antd';
 import ReactJson from 'react-json-view';
 
 import './index.less';
+import SpecializedEditor from "../SpecializedEditor";
 
 export default class Index extends Component {
   constructor(props) {
@@ -11,6 +12,7 @@ export default class Index extends Component {
       showJSONEditor: false,
       txt: props.defaultValue,
       src: null,
+      editorValue: 0, // 0: simpleRequest, 1: specializedResponse
     }
 
     try {
@@ -54,42 +56,63 @@ export default class Index extends Component {
     this.props.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
   }
 
-  handleEditorSwitch = showJSONEditor => {
+  handleJSONEditorSwitch = showJSONEditor => {
     this.setState({ showJSONEditor });
   }
 
+  handleEditorRatioChange = e => {
+    this.setState({
+        editorValue: e.target.value
+      }
+    );
+  };
+
 
   render() {
-
     return (
       <>
-        <div className="replace-with">
-          Replace With:
-        </div>
-        <textarea
-          className="overrideTxt"
-          // placeholder="replace with"
-          style={{ resize: 'none' }}
-          value={this.state.txt}
-          onChange={e => this.handleOverrideTxtChange(e.target.value)}
-        />
-        <Switch style={{ marginTop: '6px' }} onChange={this.handleEditorSwitch} checkedChildren="JSON Editor"
-                unCheckedChildren="JSON Editor" size="small"/>
-        {this.state.showJSONEditor && (
-          this.state.src ?
-            <div className="JSONEditor">
-              <ReactJson
-                name={false}
-                collapsed
-                collapseStringsAfterLength={12}
-                src={this.state.src}
-                onEdit={this.handleJSONEditorChange}
-                onAdd={this.handleJSONEditorChange}
-                onDelete={this.handleJSONEditorChange}
-                displayDataTypes={false}
+        <Radio.Group value={this.state.editorValue} onChange={this.handleEditorRatioChange}>
+          <Radio.Button value={0}>Request</Radio.Button>
+          <Radio.Button value={1}>Response</Radio.Button>
+        </Radio.Group>
+        {
+          this.state.editorValue === 0
+            ? <SpecializedEditor
+                updateAddBtnTop={this.props.updateAddBtnTop}
+                index={this.props.index}
+                defaultFunc={this.props.defaultFunc}
               />
-            </div> : <div className="JSONEditor Invalid">Invalid JSON</div>
-        )}
+            : (
+              <div>
+                <div className="replace-with">
+                  Replace With:
+                </div>
+                <textarea
+                  className="overrideTxt"
+                  style={{ resize: 'none' }}
+                  value={this.state.txt}
+                  onChange={e => this.handleOverrideTxtChange(e.target.value)}
+                />
+                <Switch style={{ marginTop: '6px' }} onChange={this.handleJSONEditorSwitch} checkedChildren="JSON Editor"
+                        unCheckedChildren="JSON Editor" size="small"/>
+                {this.state.showJSONEditor && (
+                  this.state.src ?
+                    <div className="JSONEditor">
+                      <ReactJson
+                        name={false}
+                        collapsed
+                        collapseStringsAfterLength={12}
+                        src={this.state.src}
+                        onEdit={this.handleJSONEditorChange}
+                        onAdd={this.handleJSONEditorChange}
+                        onDelete={this.handleJSONEditorChange}
+                        displayDataTypes={false}
+                      />
+                    </div> : <div className="JSONEditor Invalid">Invalid JSON</div>
+                )}
+              </div>
+            )
+        }
       </>
     );
   }
