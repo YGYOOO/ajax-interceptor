@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import { Switch, Radio } from 'antd';
-import ReactJson from 'react-json-view';
+import React, { Component } from 'react'
+import { Switch, Radio } from 'antd'
+import ReactJson from 'react-json-view'
+import MonacoEditor from '../Editor'
 
-import './index.less';
-import SpecializedEditor from "../SpecializedEditor";
+import './index.less'
 
 export default class Index extends Component {
   constructor(props) {
-    super();
+    super()
     this.state = {
       showJSONEditor: false,
       txt: props.defaultValue,
@@ -16,9 +16,9 @@ export default class Index extends Component {
     }
 
     try {
-      let src = JSON.parse(props.defaultValue);
+      let src = JSON.parse(props.defaultValue)
       if (src && typeof src === 'object') {
-        this.state.src = src;
+        this.state.src = src
       }
     } catch (e) {
 
@@ -28,58 +28,58 @@ export default class Index extends Component {
 
   componentDidUpdate(prevProps, { showJSONEditor }) {
     if (showJSONEditor !== this.state.showJSONEditor) {
-      this.props.updateAddBtnTop();
+      this.props.updateAddBtnTop()
     }
   }
 
   handleOverrideTxtChange = (txt) => {
-    let src;
+    let src
     try {
-      src = JSON.parse(txt);
+      src = JSON.parse(txt)
       if (!(src && typeof src === 'object')) {
-        src = null;
+        src = null
       }
     } catch (e) {
 
     }
-    this.setState({ txt, src });
+    this.setState({ txt, src })
 
-    window.setting.ajaxInterceptor_rules[this.props.index].overrideTxt = txt;
-    this.props.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
+    window.setting.ajaxInterceptor_rules[this.props.index].overrideTxt = txt
+    this.props.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules)
   }
 
   handleJSONEditorChange = ({ updated_src: src }) => {
-    let txt = JSON.stringify(src);
-    this.setState({ txt, src });
+    let txt = JSON.stringify(src)
+    this.setState({ txt, src })
 
-    window.setting.ajaxInterceptor_rules[this.props.index].overrideTxt = txt;
-    this.props.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules);
+    window.setting.ajaxInterceptor_rules[this.props.index].overrideTxt = txt
+    this.props.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules)
   }
 
   handleJSONEditorSwitch = showJSONEditor => {
-    this.setState({ showJSONEditor });
+    this.setState({ showJSONEditor })
   }
 
   handleEditorRatioChange = e => {
     this.setState({
         editorValue: e.target.value
       }
-    );
-  };
+    )
+  }
 
 
   render() {
     return (
       <>
-        <Radio.Group value={this.state.editorValue} onChange={this.handleEditorRatioChange}>
+        <Radio.Group value={this.state.editorValue} onChange={this.handleEditorRatioChange} className="replace-radio">
           <Radio.Button value={0}>Request</Radio.Button>
           <Radio.Button value={1}>Response</Radio.Button>
         </Radio.Group>
         {
           this.state.editorValue === 0
-            ? <SpecializedEditor
-                updateAddBtnTop={this.props.updateAddBtnTop}
+            ? <MonacoEditor
                 index={this.props.index}
+                language="javascript"
                 defaultFunc={this.props.defaultFunc}
               />
             : (
@@ -98,22 +98,29 @@ export default class Index extends Component {
                 {this.state.showJSONEditor && (
                   this.state.src ?
                     <div className="JSONEditor">
-                      <ReactJson
-                        name={false}
-                        collapsed
-                        collapseStringsAfterLength={12}
-                        src={this.state.src}
-                        onEdit={this.handleJSONEditorChange}
-                        onAdd={this.handleJSONEditorChange}
-                        onDelete={this.handleJSONEditorChange}
-                        displayDataTypes={false}
-                      />
+                      {/*<ReactJson*/}
+                      {/*  name={false}*/}
+                      {/*  collapsed*/}
+                      {/*  collapseStringsAfterLength={12}*/}
+                      {/*  src={this.state.src}*/}
+                      {/*  onEdit={this.handleJSONEditorChange}*/}
+                      {/*  onAdd={this.handleJSONEditorChange}*/}
+                      {/*  onDelete={this.handleJSONEditorChange}*/}
+                      {/*  displayDataTypes={false}*/}
+                      {/*/>*/}
+                      {/*<MonacoEditor*/}
+                      {/*  updateAddBtnTop={this.props.updateAddBtnTop}*/}
+                      {/*  index={this.props.index}*/}
+                      {/*  defaultFunc={this.props.defaultFunc}*/}
+                      {/*  language="json"*/}
+                      {/*  onChange={console.log(11111)}*/}
+                      {/*/>*/}
                     </div> : <div className="JSONEditor Invalid">Invalid JSON</div>
                 )}
               </div>
             )
         }
       </>
-    );
+    )
   }
 }

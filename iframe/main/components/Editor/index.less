@@ -1,3 +1,32 @@
-.monaco-editor {
+.monaco-editor-container {
   text-align: left;
+  position: relative;
+}
+
+.monaco-editor-header {
+  height: 40px;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #18212d;
+  color: #ffffffb3;
+  border-bottom: 1px solid #2b2d42;
+  .language-select {
+    width: 110px;
+  }
+  .language-select .ant-select-selection {
+    border: none !important;
+    background: #353c47 !important;
+    color: #ffffff;
+  }
+  .language-select .ant-select-arrow {
+    color: #ffffffb3;
+  }
+  .align-button {
+    margin-left: 12px;
+  }
+  .down-button {
+    margin-left: 2px;
+  }
 }

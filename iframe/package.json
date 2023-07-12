@@ -17,12 +17,12 @@
     "file-loader": "^6.2.0",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
+    "monaco-editor": "^0.34.0",
     "postcss-loader": "^3.0.0",
     "ppfish": "^1.6.7",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-json-view": "^1.19.1",
-    "react-monaco-editor": "^0.41.2",
     "style-loader": "^0.23.1",
     "svg-loader": "0.0.2",
     "webpack": "^5.85.0"
