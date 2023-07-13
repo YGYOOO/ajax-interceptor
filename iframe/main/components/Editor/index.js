@@ -8,7 +8,6 @@ import 'monaco-editor/esm/vs/editor/contrib/folding/browser/folding.js' // 折�
 import 'monaco-editor/esm/vs/editor/contrib/format/browser/formatActions.js' // 格式化代码
 import 'monaco-editor/esm/vs/editor/contrib/suggest/browser/suggestController.js' // 代码联想提示
 import 'monaco-editor/esm/vs/editor/contrib/tokenization/browser/tokenization.js' // 代码联想提示
-import { setChromeStorage } from '../../utils'
 import './index.less'
 
 const MonacoEditor = (props, ref) => {
@@ -18,15 +17,16 @@ const MonacoEditor = (props, ref) => {
   }))
   const {
     languageSelectOptions = ['json', 'javascript'],
-    examples = [{ egTitle: '12', egText: 'e.g.1' }, { egTitle: '2', egText: 'e.g.2' }]
+    examples = [{ egTitle: '', egText: '// Type here' }]
   } = props
   const [editor, setEditor] = useState(null)
   const [language, setLanguage] = useState(props.language || 'javascript')
+  const containerRef = useRef(null)
   useEffect(() => {
     if (!editor) {
       const editor = monaco.editor.create(editorRef.current, {
         value: '',
-        language: 'javascript',
+        language,
         theme: 'vs-dark',
         scrollBeyondLastLine: false,
         tabSize: 2,
@@ -36,22 +36,27 @@ const MonacoEditor = (props, ref) => {
       })
       editor.onDidChangeModelContent(function () {
         const newValue = editor.getValue()
-        window.setting.ajaxInterceptor_rules[props.index].overrideFunc = newValue
-        setChromeStorage('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules)
+        props.onEditorChange && props.onEditorChange(newValue)
       })
+      const resizeObserver = new ResizeObserver(() => {
+        editor.layout()
+      })
+      resizeObserver.observe(containerRef.current)
       setEditor(editor)
+    } else {
+      resizeObserver.unobserve(containerRef.current)
     }
   }, [])
   // 导入props的值，并格式化
   useEffect(() => {
     if (editor) {
-      editor.getModel().setValue(props.defaultFunc || '')
+      editor.getModel().setValue(props.defaultValue || '')
       setTimeout(() => {
         // 格式化代码
         formatDocumentAction()
       }, 300)
     }
-  }, [editor, props.text])
+  }, [editor, props.defaultValue])
 
   // 格式化代码
   const formatDocumentAction = () => {
@@ -79,7 +84,7 @@ const MonacoEditor = (props, ref) => {
     </Menu>
   )
 
-  return <div className="monaco-editor-container">
+  return <div className="monaco-editor-container" id="monaco-editor-container" ref={containerRef}>
     <div className="monaco-editor-header">
       <Select
         size="small"
@@ -114,7 +119,8 @@ const MonacoEditor = (props, ref) => {
       ref={editorRef}
       style={{
         height: 400,
-        minHeight: 100
+        minHeight: 100,
+        width: '100%'
       }}
     />
   </div>

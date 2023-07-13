@@ -2,10 +2,10 @@
 let ajax_interceptor_qoweifjqon = {
   settings: {
     ajaxInterceptor_switchOn: false,
-    ajaxInterceptor_always200On: true,
+    ajaxInterceptor_always200On: false,
     ajaxInterceptor_rules: [],
   },
-  getMatchedItem: ({ thisRequestUrl = '', thisMethod = '' }) => {
+  getMatchedInterface: ({ thisRequestUrl = '', thisMethod = '' }) => {
     return ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.find(item => {
       const { filterType = 'normal', limitMethod = 'ALL', switchOn = true, match } = item
       const matchedMethod = thisMethod === limitMethod || limitMethod === 'ALL'
@@ -14,20 +14,28 @@ let ajax_interceptor_qoweifjqon = {
       return switchOn && matchedMethod && matchedRequest
     })
   },
-  getParams: (requestUrl) => {
-    if (!requestUrl) {
-      return null
+  executeStringFunction: (stringFunction, args, funcName = '') => {
+    try {
+      stringFunction = (new Function('...args', stringFunction))(args)
+    } catch (e) {
+      console.error(`[Ajax Modifier] ExecuteFunctionError: Please check the ${funcName} function.\n`, e)
     }
-    const paramStr = requestUrl.indexOf('?') === -1 ? requestUrl : requestUrl.slice(requestUrl.indexOf('?') + 1)
-    const keyValueArr = paramStr.split('&')
-    let keyValueObj = {}
+    return stringFunction;
+  },
+  getRequestParams: (requestUrl) => {
+    if (!requestUrl) {
+      return null;
+    }
+    const paramStr = requestUrl.split('?').pop();
+    const keyValueArr = paramStr.split('&');
+    let keyValueObj = {};
     keyValueArr.forEach((item) => {
       // 保证中间不会把=给忽略掉
-      const itemArr = item.replace('=', '〓').split('〓')
-      const itemObj = { [itemArr[0]]: itemArr[1] }
-      keyValueObj = Object.assign(keyValueObj, itemObj)
-    })
-    return keyValueObj
+      const itemArr = item.replace('=', '〓').split('〓');
+      const itemObj = {[itemArr[0]]: itemArr[1]};
+      keyValueObj = Object.assign(keyValueObj, itemObj);
+    });
+    return keyValueObj;
   },
   originalXHR: window.XMLHttpRequest,
   myXHR: function () {
@@ -77,58 +85,52 @@ let ajax_interceptor_qoweifjqon = {
         this.open = (...args) => {
           this._openArgs = args
           const [method, requestUrl] = args
-          this._matchedInterface = ajax_interceptor_qoweifjqon.getMatchedItem({
+          this._matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({
             thisRequestUrl: requestUrl,
             thisMethod: method
           })
           const matchedInterface = this._matchedInterface
           // modify request
           if (matchedInterface) {
-            // let { overrideFunc } = matchedInterface
-            // try {
-            //   overrideFunc = (new Function("args", overrideFunc))
-            // } catch (e) {
-            //   console.log('eeeeee', e)
-            // }
-            // args = overrideFunc(args)
-            // const { replacementUrl, replacementMethod, headers, requestPayloadText } = matchedInterface
-            // if (replacementUrl || replacementMethod || headers || requestPayloadText) {
-            //   console.groupCollapsed(`%cMatched XHR Request modified：${matchedInterface.request}`, 'background-color: #fa8c16 color: white padding: 4px')
-            //   console.info(`%cOriginal Request Url：`, 'background-color: #ff8040 color: white', requestUrl)
-            // }
-            // if (matchedInterface.replacementUrl && args[1]) {
-            //   args[1] = matchedInterface.replacementUrl
-            //   console.info(`%cModified Url：`, 'background-color: #ff8040 color: white', matchedInterface.replacementUrl)
-            // }
-            // if (matchedInterface.replacementMethod && args[0]) {
-            //   args[0] = matchedInterface.replacementMethod
-            //   console.info(`%cModified Method：`, 'background-color: #ff8040 color: white', matchedInterface.replacementMethod)
-            // }
-            // if (matchedInterface.requestPayloadText && args[0] && args[1] && args[0].toUpperCase() === 'GET') {
-            //   const queryStringParameters = ajax_tools_space.getRequestParams(args[1])
-            //   const data = {
-            //     requestUrl: args[1],
-            //     queryStringParameters
-            //   }
-            //   args[1] = ajax_tools_space.executeStringFunction(matchedInterface.requestPayloadText, data)
-            //   console.info(`%cModified Request Payload, GET：`, 'background-color: #ff8040 color: white', args[1])
-            // }
+            const { overridePayloadFunc } = matchedInterface
+            if (overridePayloadFunc && args[0] && args[1] && args[0].toUpperCase() === 'GET') {
+              const queryStringParameters = ajax_interceptor_qoweifjqon.getRequestParams(args[1])
+              const data = {
+                requestUrl: args[1],
+                queryStringParameters
+              }
+              args[1] = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data, 'payload')
+            }
           }
           xhr.open && xhr.open.apply(xhr, args)
         }
         continue
+      } else if (attr === 'setRequestHeader') {
+        this.setRequestHeader = (...args) => {
+          // get headers
+          this._headerArgs = this._headerArgs ? Object.assign(this._headerArgs, {[args[0]]: args[1]}) : {[args[0]]: args[1]};
+          const matchedInterface = this._matchedInterface;
+          if (!(matchedInterface && matchedInterface.overrideHeadersFunc)) { // 没有要拦截修改或添加的header
+            xhr.setRequestHeader && xhr.setRequestHeader.apply(xhr, args);
+          }
+        }
+        continue;
       } else if (attr === 'send') {
         this.send = (...args) => {
           const matchedInterface = this._matchedInterface
           if (matchedInterface) {
+            // modify headers
+            const { overrideHeadersFunc, overridePayloadFunc } = matchedInterface
+            if (overrideHeadersFunc) {
+              const headers = ajax_interceptor_qoweifjqon.executeStringFunction(overrideHeadersFunc, this._headerArgs, 'headers')
+              Object.keys(headers).forEach((key) => {
+                xhr.setRequestHeader && xhr.setRequestHeader.apply(xhr, [key, headers[key]]);
+              })
+            }
+            // modify not GET payload
             const [method] = this._openArgs
-            if (matchedInterface.overrideFunc && method !== 'GET') { // Not GET
-              try {
-                const func = (new Function("...args", matchedInterface.overrideFunc))
-                args = func(...args)
-              } catch (e) {
-                console.log('error', e)
-              }
+            if (overridePayloadFunc && method !== 'GET') {
+              args[0] = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, args[0], 'payload');
             }
           }
           // this._sendArgs = args
@@ -159,32 +161,36 @@ let ajax_interceptor_qoweifjqon = {
   },
   originalFetch: window.fetch.bind(window),
   myFetch: function (...args) {
+    const [requestUrl, data] = args;
+    const matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({thisRequestUrl: requestUrl, thisMethod: data && data.method});
+    if (matchedInterface && args) {
+      const { overrideHeadersFunc, overridePayloadFunc } = matchedInterface;
+      if (overrideHeadersFunc && args[1]) {
+        const headers = ajax_interceptor_qoweifjqon.executeStringFunction(overrideHeadersFunc, this._headerArgs, 'headers')
+        args[1].headers = headers
+      }
+      if (overridePayloadFunc && args[0] && args[1]) {
+        const { method } = args[1]
+        if (['GET', 'HEAD'].includes(method.toUpperCase())) {
+          const queryStringParameters = ajax_interceptor_qoweifjqon.getRequestParams(args[0]);
+          const data = {
+            requestUrl: args[0],
+            queryStringParameters
+          }
+          args[0] = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data);
+        } else {
+          data.body = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data.body);
+        }
+      }
+    }
     return ajax_interceptor_qoweifjqon.originalFetch(...args).then((response) => {
       let txt = undefined
-      const requestMethod = args[1]?.method
-      ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.forEach(({
-                                                                            filterType = 'normal',
-                                                                            limitMethod = 'ALL',
-                                                                            switchOn = true,
-                                                                            match,
-                                                                            overrideTxt = ''
-                                                                          }) => {
-        let matched = false
-        if (switchOn && match) {
-          if (filterType === 'normal' && response.url.indexOf(match) > -1 && (requestMethod === limitMethod || limitMethod === 'ALL')) {
-            matched = true
-          } else if (filterType === 'regex' && response.url.match(new RegExp(match, 'i')) && (requestMethod === limitMethod || limitMethod === 'ALL')) {
-            matched = true
-          }
-        }
-
-        if (matched) {
-          window.dispatchEvent(new CustomEvent("pageScript", {
-            detail: { url: response.url, match }
-          }))
-          txt = overrideTxt
-        }
-      })
+      if (matchedInterface && matchedInterface.overrideTxt) {
+        window.dispatchEvent(new CustomEvent("pageScript", {
+          detail: { url: response.url, match: matchedInterface.match }
+        })) // ??
+        txt = matchedInterface.overrideTxt
+      }
 
       if (txt !== undefined) {
         const stream = new ReadableStream({
@@ -197,16 +203,24 @@ let ajax_interceptor_qoweifjqon = {
             controller.close()
           }
         })
-
+        let always200OnResponseParams = {}
+        if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_always200On) {
+          always200OnResponseParams = {
+            status: 200,
+            statusText: 'OK',
+            ok: true
+          }
+        }
         const newResponse = new Response(stream, {
           headers: response.headers,
           status: response.status,
           statusText: response.statusText,
+          ok: response.ok,
+          ...always200OnResponseParams
         })
         const proxy = new Proxy(newResponse, {
           get: function (target, name) {
             switch (name) {
-              case 'ok':
               case 'redirected':
               case 'type':
               case 'url':

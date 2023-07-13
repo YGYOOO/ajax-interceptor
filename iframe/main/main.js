@@ -244,8 +244,6 @@ export default class Main extends Component {
                                                              limitMethod = 'ALL',
                                                              match,
                                                              label,
-                                                             overrideTxt,
-                                                             overrideFunc,
                                                              switchOn = true,
                                                              key
                                                            }, i) => (
@@ -306,8 +304,6 @@ export default class Main extends Component {
                     }
                   >
                     <Replacer
-                      defaultFunc={overrideFunc}
-                      defaultValue={overrideTxt}
                       updateAddBtnTop={this.updateAddBtnTop}
                       index={i}
                       set={this.set}
