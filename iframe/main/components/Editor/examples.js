@@ -48,56 +48,57 @@ return args
 
 export const RESPONSE_EXAMPLES = [
   {
-    egTitle: 'e.g. json Basic',
+    egTitle: 'e.g. json',
     egText: `{
   "status": 200,
   "response": "OK"
 }
-`
+`,
+    egLanguage: 'json'
   },
-  {
-    egTitle: 'e.g. javascript Basic',
-    egText: `const data = []
-for (let i = 0 i < 10 i++) {
-  data.push({ id: i })
-}
-
-return {
-  "status": 200,
-  "response": data
-}
-`
-  },
-  {
-    egTitle: 'e.g. javascript Mock.js',
-    egText: `const data = Mock.mock({
-  'list|1-10': [{
-    'id|+1': 1
-  }]
-})
-
-return {
-  "status": 200,
-  "response": data
-}
-
-// Mock.js: https://github.com/nuysoft/Mock/wiki/Getting-Started
-`
-  },
-  {
-    egTitle: 'e.g. javascript Create Scene',
-    egText: `const { method, payload, originalResponse } = arguments[0]
-if (method === 'get') { // Method
-  // do something 
-}
-if (payload) { // parameters { queryStringParameters，requestPayload }
-  // do something
-}
-
-return {
-  "status": 200,
-  "response": originalResponse
-}
-`
-  }
+//   {
+//     egTitle: 'e.g. javascript Basic',
+//     egText: `const data = []
+// for (let i = 0; i < 10; i++) {
+//   data.push({ id: i })
+// }
+//
+// return {
+//   "status": 200,
+//   "response": data
+// }
+// `
+//   },
+//   {
+//     egTitle: 'e.g. javascript Mock.js',
+//     egText: `const data = Mock.mock({
+//   'list|1-10': [{
+//     'id|+1': 1
+//   }]
+// })
+//
+// return {
+//   "status": 200,
+//   "response": data
+// }
+//
+// // Mock.js: https://github.com/nuysoft/Mock/wiki/Getting-Started
+// `
+//   },
+//   {
+//     egTitle: 'e.g. javascript Create Scene',
+//     egText: `const { method, payload, originalResponse } = arguments[0]
+// if (method === 'get') { // Method
+//   // do something
+// }
+// if (payload) { // parameters { queryStringParameters，requestPayload }
+//   // do something
+// }
+//
+// return {
+//   "status": 200,
+//   "response": originalResponse
+// }
+// `
+//   }
 ]

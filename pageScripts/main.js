@@ -92,7 +92,7 @@ let ajax_interceptor_qoweifjqon = {
           const matchedInterface = this._matchedInterface
           // modify request
           if (matchedInterface) {
-            const { overridePayloadFunc } = matchedInterface
+            const { overridePayloadFunc, match } = matchedInterface
             if (overridePayloadFunc && args[0] && args[1] && args[0].toUpperCase() === 'GET') {
               const queryStringParameters = ajax_interceptor_qoweifjqon.getRequestParams(args[1])
               const data = {
@@ -188,7 +188,7 @@ let ajax_interceptor_qoweifjqon = {
       if (matchedInterface && matchedInterface.overrideTxt) {
         window.dispatchEvent(new CustomEvent("pageScript", {
           detail: { url: response.url, match: matchedInterface.match }
-        })) // ??
+        }))
         txt = matchedInterface.overrideTxt
       }
 

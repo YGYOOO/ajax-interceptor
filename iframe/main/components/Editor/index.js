@@ -70,15 +70,21 @@ const MonacoEditor = (props, ref) => {
     }
   }
 
-  const onAddExampleClick = (egText) => {
-    if (editor) editor.getModel().setValue(egText)
+  const onAddExampleClick = (eg) => {
+    if (editor) {
+      const { egText, egLanguage = 'javascript' } = eg
+      editor.getModel().setValue(egText)
+      if (egLanguage !== language)
+      setLanguage(egLanguage)
+      monaco.editor.setModelLanguage(editor.getModel(), egLanguage)
+    }
   }
 
   const menu = (
     <Menu>
       {
         examples.map((eg, index) => <Menu.Item key={index}>
-          <div onClick={() => onAddExampleClick(eg.egText)}>{eg.egTitle}</div>
+          <div onClick={() => onAddExampleClick(eg)}>{eg.egTitle}</div>
         </Menu.Item>)
       }
     </Menu>

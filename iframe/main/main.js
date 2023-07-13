@@ -331,7 +331,7 @@ export default class Main extends Component {
                     {this.state.interceptedRequests[match] && (
                       <>
                         <div className="intercepted-requests">
-                          Intercepted Requests:
+                          Intercepted Networks:
                         </div>
                         <div className="intercepted">
                           {this.state.interceptedRequests[match] && this.state.interceptedRequests[match].map(({

@@ -58,9 +58,9 @@ export default class Index extends Component {
     this.props.set('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules)
   }
 
-  // handleJSONEditorSwitch = showJSONEditor => {
-  //   this.setState({ showJSONEditor })
-  // }
+  handleJSONEditorSwitch = showJSONEditor => {
+    this.setState({ showJSONEditor })
+  }
 
   handleEditorRatioChange = e => {
     this.setState({
@@ -100,12 +100,12 @@ export default class Index extends Component {
         {
           this.state.editorValue === 1 && (
             <MonacoEditor
-              ref={ref => this.monacoEditorPayloadRef = ref}
               index={this.props.index}
               language="javascript"
               defaultValue={window.setting.ajaxInterceptor_rules[this.props.index].overridePayloadFunc}
               examples={REQUEST_PAYLOAD_EXAMPLES}
               onEditorChange={this.onPayloadEditorChange}
+              languageSelectOptions={["javascript"]}
             />
           )
         }
@@ -113,12 +113,12 @@ export default class Index extends Component {
           this.state.editorValue === 2 && (
             <div>
               <MonacoEditor
-                ref={ref => this.monacoEditorHeadersRef = ref}
                 index={this.props.index}
                 language="javascript"
                 defaultValue={window.setting.ajaxInterceptor_rules[this.props.index].overrideHeadersFunc}
                 examples={HEADERS_EXAMPLES}
                 onEditorChange={this.onHeadersEditorChange}
+                languageSelectOptions={["javascript"]}
               />
             </div>
           )
@@ -127,12 +127,12 @@ export default class Index extends Component {
           this.state.editorValue === 3 && (
             <div>
               <MonacoEditor
-                ref={ref => this.monacoEditorResponseRef = ref}
                 index={this.props.index}
                 language="json"
                 defaultValue={window.setting.ajaxInterceptor_rules[this.props.index].overrideTxt}
                 examples={RESPONSE_EXAMPLES}
                 onEditorChange={this.onResponseEditorChange}
+                languageSelectOptions={["json"]} // 如果之后支持多语言切换，还要存储当前语言
               />
             </div>
           )
