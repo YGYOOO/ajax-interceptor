@@ -1,13 +1,6 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { Select, Dropdown, Icon, Menu } from 'antd'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution' // 代码高亮&提示
-import 'monaco-editor/esm/vs/language/json/monaco.contribution' // 代码高亮&提示
-import 'monaco-editor/esm/vs/editor/contrib/contextmenu/browser/contextmenu.js' // 右键显示菜单
-import 'monaco-editor/esm/vs/editor/contrib/folding/browser/folding.js' // 折叠
-import 'monaco-editor/esm/vs/editor/contrib/format/browser/formatActions.js' // 格式化代码
-import 'monaco-editor/esm/vs/editor/contrib/suggest/browser/suggestController.js' // 代码联想提示
-import 'monaco-editor/esm/vs/editor/contrib/tokenization/browser/tokenization.js' // 代码联想提示
 import './index.less'
 
 const MonacoEditor = (props, ref) => {
@@ -113,7 +106,7 @@ const MonacoEditor = (props, ref) => {
             </a>
           </Dropdown> : <a
             title="Example Case"
-            onClick={() => onAddExampleClick(examples[0].egText)}
+            onClick={() => onAddExampleClick(examples[0])}
           >
             Example
           </a>
