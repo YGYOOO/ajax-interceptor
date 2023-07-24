@@ -304,7 +304,7 @@ export default class Main extends Component {
                     }
                   >
                     <Replacer
-                      updateAddBtnTop={this.updateAddBtnTop}
+                      updateAddBtnTop_interval={this.updateAddBtnTop_interval}
                       index={i}
                       set={this.set}
                     />

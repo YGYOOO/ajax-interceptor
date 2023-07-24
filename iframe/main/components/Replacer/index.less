@@ -1,5 +1,5 @@
 .replace-with {
-  margin-bottom: 6px;
+  margin-bottom: 16px;
   text-align: left;
   font-weight: 500;
 }
@@ -51,8 +51,28 @@
 }
 .replace-radio {
   margin-bottom: 10px;
-  width: 100%;
+  width: calc(100% - 30px - 16px);
   label {
     width: 33.33%;
   }
+}
+.expert-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d9d9d9;
+  color: #ffffff;
+  float: right;
+}
+.ant-radio-button-wrapper {
+  height: 30px;
+  line-height: 28px;
+}
+.expert-wrapper {
+  display: inline-flex;
+  justify-content: space-between;
+  width: 100%;
 }

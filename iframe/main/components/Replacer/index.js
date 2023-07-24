@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Switch, Radio } from 'antd'
-// import ReactJson from 'react-json-view'
+import ReactJson from 'react-json-view'
 import MonacoEditor from '../Editor'
 import { REQUEST_PAYLOAD_EXAMPLES, HEADERS_EXAMPLES, RESPONSE_EXAMPLES } from '../Editor/examples'
 import { setChromeStorage } from '../../utils'
@@ -12,13 +12,14 @@ export default class Index extends Component {
     super()
     this.state = {
       showJSONEditor: false,
-      txt: props.defaultValue,
+      txt: window.setting.ajaxInterceptor_rules[props.index].overrideTxt,
       src: null,
       editorValue: window.setting.ajaxInterceptor_rules[props.index].editorValue || 3, // 1: payload, 2: headers, 3: response
+      isExpert: window.setting.ajaxInterceptor_rules[props.index].isExpert || false
     }
 
     try {
-      let src = JSON.parse(props.defaultValue)
+      let src = JSON.parse(this.state.txt)
       if (src && typeof src === 'object') {
         this.state.src = src
       }
@@ -34,7 +35,7 @@ export default class Index extends Component {
   //   }
   // }
 
-  handleOverrideTxtChange = (txt) => {
+  handleSimpleOverrideTxtChange = (txt) => {
     let src
     try {
       src = JSON.parse(txt)
@@ -60,6 +61,18 @@ export default class Index extends Component {
 
   handleJSONEditorSwitch = showJSONEditor => {
     this.setState({ showJSONEditor })
+  }
+
+  handleExpertCheckChange = () => {
+    const curIsExpert = this.state.isExpert
+    this.setState({
+        isExpert: !curIsExpert,
+        txt: window.setting.ajaxInterceptor_rules[this.props.index].overrideTxt
+      }
+    )
+    window.setting.ajaxInterceptor_rules[this.props.index].isExpert = !curIsExpert
+    setChromeStorage('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules)
+    this.props.updateAddBtnTop_interval()
   }
 
   handleEditorRatioChange = e => {
@@ -89,88 +102,101 @@ export default class Index extends Component {
   render() {
     return (
       <>
-        {/*<div className="replace-with">*/}
-        {/*  Replace With:*/}
-        {/*</div>*/}
-        <Radio.Group value={this.state.editorValue} onChange={this.handleEditorRatioChange} className="replace-radio">
-          <Radio.Button value={1}>Payload</Radio.Button>
-          <Radio.Button value={2}>Headers</Radio.Button>
-          <Radio.Button value={3}>Response</Radio.Button>
-        </Radio.Group>
         {
-          this.state.editorValue === 1 && (
-            <MonacoEditor
-              index={this.props.index}
-              language="javascript"
-              defaultValue={window.setting.ajaxInterceptor_rules[this.props.index].overridePayloadFunc}
-              examples={REQUEST_PAYLOAD_EXAMPLES}
-              onEditorChange={this.onPayloadEditorChange}
-              languageSelectOptions={["javascript"]}
-            />
-          )
-        }
-        {
-          this.state.editorValue === 2 && (
+          !this.state.isExpert && (
             <div>
-              <MonacoEditor
-                index={this.props.index}
-                language="javascript"
-                defaultValue={window.setting.ajaxInterceptor_rules[this.props.index].overrideHeadersFunc}
-                examples={HEADERS_EXAMPLES}
-                onEditorChange={this.onHeadersEditorChange}
-                languageSelectOptions={["javascript"]}
-              />
+              <div className="replace-with">
+                Replace With:
+                <div
+                  onClick={this.handleExpertCheckChange}
+                  className="expert-icon"
+                  style={{ backgroundColor: `${this.state.isExpert ? '#40a9ff' : '#d9d9d9'}` }} >E</div>
+              </div>
+              <div>
+          <textarea
+            className="overrideTxt"
+            style={{ resize: 'none' }}
+            value={this.state.txt}
+            onChange={e => this.handleSimpleOverrideTxtChange(e.target.value)}
+          />
+                <Switch style={{ marginTop: '6px' }} onChange={this.handleJSONEditorSwitch} checkedChildren="JSON Editor"
+                        unCheckedChildren="JSON Editor" size="small"/>
+                {this.state.showJSONEditor && (
+                  this.state.src ?
+                    <div className="JSONEditor">
+                      <ReactJson
+                        name={false}
+                        collapsed
+                        collapseStringsAfterLength={12}
+                        src={this.state.src}
+                        onEdit={this.handleJSONEditorChange}
+                        onAdd={this.handleJSONEditorChange}
+                        onDelete={this.handleJSONEditorChange}
+                        displayDataTypes={false}
+                      />
+                    </div> : <div className="JSONEditor Invalid">Invalid JSON</div>
+                )}
+              </div>
             </div>
           )
         }
         {
-          this.state.editorValue === 3 && (
+          this.state.isExpert && (
             <div>
-              <MonacoEditor
-                index={this.props.index}
-                language="json"
-                defaultValue={window.setting.ajaxInterceptor_rules[this.props.index].overrideTxt}
-                examples={RESPONSE_EXAMPLES}
-                onEditorChange={this.onResponseEditorChange}
-                languageSelectOptions={["json"]} // 如果之后支持多语言切换，还要存储当前语言
-              />
+              <div className="expert-wrapper">
+                <Radio.Group value={this.state.editorValue} onChange={this.handleEditorRatioChange} className="replace-radio">
+                  <Radio.Button value={1}>Payload</Radio.Button>
+                  <Radio.Button value={2}>Headers</Radio.Button>
+                  <Radio.Button value={3}>Response</Radio.Button>
+                </Radio.Group>
+                <div
+                  onClick={this.handleExpertCheckChange}
+                  className="expert-icon"
+                  style={{ backgroundColor: `${this.state.isExpert ? '#1890ff' : '#dddddd'}` }} >E</div>
+              </div>
+              {
+                this.state.editorValue === 1 && (
+                  <MonacoEditor
+                    index={this.props.index}
+                    language="javascript"
+                    defaultValue={window.setting.ajaxInterceptor_rules[this.props.index].overridePayloadFunc}
+                    examples={REQUEST_PAYLOAD_EXAMPLES}
+                    onEditorChange={this.onPayloadEditorChange}
+                    languageSelectOptions={["javascript"]}
+                  />
+                )
+              }
+              {
+                this.state.editorValue === 2 && (
+                  <div>
+                    <MonacoEditor
+                      index={this.props.index}
+                      language="javascript"
+                      defaultValue={window.setting.ajaxInterceptor_rules[this.props.index].overrideHeadersFunc}
+                      examples={HEADERS_EXAMPLES}
+                      onEditorChange={this.onHeadersEditorChange}
+                      languageSelectOptions={["javascript"]}
+                    />
+                  </div>
+                )
+              }
+              {
+                this.state.editorValue === 3 && (
+                  <div>
+                    <MonacoEditor
+                      index={this.props.index}
+                      language="json"
+                      defaultValue={window.setting.ajaxInterceptor_rules[this.props.index].overrideTxt}
+                      examples={RESPONSE_EXAMPLES}
+                      onEditorChange={this.onResponseEditorChange}
+                      languageSelectOptions={["json"]} // 如果之后支持多语言切换，还要存储当前语言
+                    />
+                  </div>
+                )
+              }
             </div>
           )
         }
-            {/*// (*/}
-            {/*//   <div>*/}
-            {/*//     <textarea*/}
-            {/*//       className="overrideTxt"*/}
-            {/*//       style={{ resize: 'none' }}*/}
-            {/*//       value={this.state.txt}*/}
-            {/*//       onChange={e => this.handleOverrideTxtChange(e.target.value)}*/}
-            {/*//     />*/}
-            {/*//     <Switch style={{ marginTop: '6px' }} onChange={this.handleJSONEditorSwitch} checkedChildren="JSON Editor"*/}
-            {/*//             unCheckedChildren="JSON Editor" size="small"/>*/}
-            {/*//     {this.state.showJSONEditor && (*/}
-            {/*//       this.state.src ?*/}
-            {/*//         <div className="JSONEditor">*/}
-            {/*//           <ReactJson*/}
-            {/*//             name={false}*/}
-            {/*//             collapsed*/}
-            {/*//             collapseStringsAfterLength={12}*/}
-            {/*//             src={this.state.src}*/}
-            {/*//             onEdit={this.handleJSONEditorChange}*/}
-            {/*//             onAdd={this.handleJSONEditorChange}*/}
-            {/*//             onDelete={this.handleJSONEditorChange}*/}
-            {/*//             displayDataTypes={false}*/}
-            {/*//           />*/}
-            {/*//           <MonacoEditor*/}
-            {/*//             updateAddBtnTop={this.props.updateAddBtnTop}*/}
-            {/*//             index={this.props.index}*/}
-            {/*//             defaultFunc={this.props.defaultFunc}*/}
-            {/*//             language="json"*/}
-            {/*//             onChange={console.log(11111)}*/}
-            {/*//           />*/}
-            {/*//         </div> : <div className="JSONEditor Invalid">Invalid JSON</div>*/}
-            {/*//     )}*/}
-            {/*//   </div>*/}
-            {/*// )*/}
       </>
     )
   }
