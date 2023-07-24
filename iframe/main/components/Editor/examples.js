@@ -1,47 +1,93 @@
 export const HEADERS_EXAMPLES = [{
-  egText: `let headersArgs = arguments[0] ? arguments[0] : {}
+  egText: `/**
+ * Modify headers here
+ **/
+
+/* console to see the arguments */
+// console.log(...arguments)
+
+/* get origin headers */
+let headersArgs = arguments[0] ? arguments[0] : {}
+/* modify headers */
 headersArgs["Accept"] = "*/*"
 
+/* return new headers */
 return headersArgs
 `
 }]
 export const REQUEST_PAYLOAD_EXAMPLES = [
   {
     egTitle: 'e.g. GET',
-    egText: `const { requestUrl, queryStringParameters } = arguments[0]
+    egText: `/**
+ * Modify payload here
+ * This example is of GET method.
+ **/
+
+/* console to see the arguments */
+// console.log(...arguments)
+
+/* get origin url and params */
+const {
+  requestUrl,
+  queryParams
+} = arguments[0]
 
 let newRequestUrl = requestUrl.split('?')[0] + '?'
-const queryParams = Object.assign(queryStringParameters, {
-  // Add or replace the input parameters
+
+/* modify params */
+const newQueryParams = Object.assign(queryParams, {
   test: 'test123'
 })
-Object.keys(queryParams).forEach((key, index) => {
+
+/* connect url and params */
+Object.keys(newQueryParams).forEach((key, index) => {
   if (index !== 0) newRequestUrl += '&'
-  newRequestUrl += key+'='+queryParams[key]
+  newRequestUrl += key + '=' + newQueryParams[key]
 })
 
+/* return new request url */
 return newRequestUrl
 `
   },
   {
-    egTitle: 'e.g. POST Json',
-    egText: `// if args is Json
-const args = arguments[0]
+    egTitle: 'e.g. POST JSON',
+    egText: `/**
+ * Modify payload here
+ * This example is of POST Method and JSON type.
+ **/
 
-const params = JSON.parse(args)
-params.test = 'test123'
+/* console to see the arguments */
+// console.log(...arguments)
 
-return JSON.stringify(params)
+/* get origin payload */
+const orgArgs = arguments[0]
+
+/* modify payload */
+const newParams = JSON.parse(orgArgs)
+newParams.test = 'test123'
+
+/* return new payload */
+return JSON.stringify(newParams)
 `
   },
   {
     egTitle: 'e.g. POST FormData',
-    egText: `// if args is FormData Object
-const args = arguments[0]
+    egText: `/**
+ * Modify payload here
+ * This example is of POST Method and FormData type.
+ **/
 
-args.append('test', 'test123')
+/* console to see the arguments */
+// console.log(...arguments)
 
-return args
+/* get origin payload */
+const newArgs = arguments[0]
+
+/* modify payload */
+newArgs.append('test', 'test123')
+
+/* return new payload */
+return newArgs
 `
   }
 ]
@@ -91,7 +137,7 @@ export const RESPONSE_EXAMPLES = [
 // if (method === 'get') { // Method
 //   // do something
 // }
-// if (payload) { // parameters { queryStringParameters，requestPayload }
+// if (payload) { // parameters { queryParams，requestPayload }
 //   // do something
 // }
 //

@@ -42,7 +42,7 @@ let ajax_interceptor_qoweifjqon = {
     let pageScriptEventDispatched = false
     const modifyResponse = () => {
       // const [method, requestUrl] = this._openArgs
-      // const queryStringParameters = ajax_tools_space.getRequestParams(requestUrl)
+      // const queryParams = ajax_tools_space.getRequestParams(requestUrl)
       // const [requestPayload] = this._sendArgs
       const matchedInterface = this._matchedInterface
       if (matchedInterface && matchedInterface.overrideTxt) {
@@ -92,12 +92,12 @@ let ajax_interceptor_qoweifjqon = {
           const matchedInterface = this._matchedInterface
           // modify request
           if (matchedInterface) {
-            const { overridePayloadFunc, match } = matchedInterface
+            const { overridePayloadFunc } = matchedInterface
             if (overridePayloadFunc && args[0] && args[1] && args[0].toUpperCase() === 'GET') {
-              const queryStringParameters = ajax_interceptor_qoweifjqon.getRequestParams(args[1])
+              const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(args[1])
               const data = {
                 requestUrl: args[1],
-                queryStringParameters
+                queryParams
               }
               args[1] = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data, 'payload')
             }
@@ -172,10 +172,10 @@ let ajax_interceptor_qoweifjqon = {
       if (overridePayloadFunc && args[0] && args[1]) {
         const { method } = args[1]
         if (['GET', 'HEAD'].includes(method.toUpperCase())) {
-          const queryStringParameters = ajax_interceptor_qoweifjqon.getRequestParams(args[0]);
+          const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(args[0]);
           const data = {
             requestUrl: args[0],
-            queryStringParameters
+            queryParams
           }
           args[0] = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data);
         } else {

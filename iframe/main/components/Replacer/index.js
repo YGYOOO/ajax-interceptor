@@ -17,9 +17,12 @@ export default class Index extends Component {
       editorValue: window.setting.ajaxInterceptor_rules[props.index].editorValue || 3, // 1: payload, 2: headers, 3: response
       isExpert: window.setting.ajaxInterceptor_rules[props.index].isExpert || false
     }
+    this.judgeIsJSON(this.state.txt)
+  }
 
+  judgeIsJSON(txt = null) {
     try {
-      let src = JSON.parse(this.state.txt)
+      let src = JSON.parse(txt)
       if (src && typeof src === 'object') {
         this.state.src = src
       }
@@ -28,23 +31,15 @@ export default class Index extends Component {
     }
   }
 
-
-  // componentDidUpdate(prevProps, { showJSONEditor }) {
-  //   if (showJSONEditor !== this.state.showJSONEditor) {
-  //     this.props.updateAddBtnTop()
-  //   }
-  // }
+  componentDidUpdate(prevProps, { showJSONEditor }) {
+    if (showJSONEditor !== this.state.showJSONEditor) {
+      this.props.updateAddBtnTop_interval()
+    }
+  }
 
   handleSimpleOverrideTxtChange = (txt) => {
     let src
-    try {
-      src = JSON.parse(txt)
-      if (!(src && typeof src === 'object')) {
-        src = null
-      }
-    } catch (e) {
-
-    }
+    this.judgeIsJSON(txt)
     this.setState({ txt, src })
 
     window.setting.ajaxInterceptor_rules[this.props.index].overrideTxt = txt
@@ -61,6 +56,8 @@ export default class Index extends Component {
 
   handleJSONEditorSwitch = showJSONEditor => {
     this.setState({ showJSONEditor })
+    this.judgeIsJSON(this.state.txt)
+    this.props.updateAddBtnTop_interval()
   }
 
   handleExpertCheckChange = () => {
@@ -105,7 +102,7 @@ export default class Index extends Component {
         {
           !this.state.isExpert && (
             <div>
-              <div className="replace-with">
+              <div className="expert-wrapper replace-with">
                 Replace With:
                 <div
                   onClick={this.handleExpertCheckChange}
