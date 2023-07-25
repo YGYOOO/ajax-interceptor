@@ -95,56 +95,71 @@ return newArgs
 export const RESPONSE_EXAMPLES = [
   {
     egTitle: 'e.g. json',
-    egText: `{
-  "status": 200,
-  "response": "OK"
-}
-`,
-    egLanguage: 'json'
+    egText: `/**
+ * Modify response here
+ * This example is of JSON type response.
+ **/
+
+/* console to see the arguments */
+// console.log(...arguments)
+
+/* get origin params and response */
+const {
+  method,
+  payload: {
+    queryParams,
+    requestPayload
   },
-//   {
-//     egTitle: 'e.g. javascript Basic',
-//     egText: `const data = []
-// for (let i = 0; i < 10; i++) {
-//   data.push({ id: i })
-// }
-//
-// return {
-//   "status": 200,
-//   "response": data
-// }
-// `
-//   },
-//   {
-//     egTitle: 'e.g. javascript Mock.js',
-//     egText: `const data = Mock.mock({
-//   'list|1-10': [{
-//     'id|+1': 1
-//   }]
-// })
-//
-// return {
-//   "status": 200,
-//   "response": data
-// }
-//
-// // Mock.js: https://github.com/nuysoft/Mock/wiki/Getting-Started
-// `
-//   },
-//   {
-//     egTitle: 'e.g. javascript Create Scene',
-//     egText: `const { method, payload, originalResponse } = arguments[0]
-// if (method === 'get') { // Method
-//   // do something
-// }
-// if (payload) { // parameters { queryParams，requestPayload }
-//   // do something
-// }
-//
-// return {
-//   "status": 200,
-//   "response": originalResponse
-// }
-// `
-//   }
+  orgResponse,
+  orgStatus,
+  orgStatusText
+} = arguments[0]
+
+/* modify response */
+let newResponse = JSON.parse(orgResponse)
+newResponse.message = 'Modify success!'
+
+/* return new response */
+return {
+  response: JSON.stringify(newResponse)
+}
+`
+  },
+  {
+    egTitle: 'e.g. text',
+    egText: `/**
+ * Modify response here
+ **/
+
+/* console to see the arguments */
+// console.log(...arguments)
+
+/* get origin params and response */
+const {
+  method,
+  payload: {
+    queryParams,
+    requestPayload
+  },
+  orgResponse,
+  orgStatus,
+  orgStatusText
+} = arguments[0]
+
+/* modify response */
+let newResponse = orgResponse
+
+/* modify only in some cases */
+if (method === 'post') {
+  newResponse = 'Modify success!'
+}
+
+/* return new response */
+return {
+  response: newResponse,
+  status: 200,
+  statusText: 'OK'
+}
+`
+  }
 ]

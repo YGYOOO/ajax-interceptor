@@ -37,7 +37,7 @@ export default class Index extends Component {
     }
   }
 
-  handleSimpleOverrideTxtChange = (txt) => {
+  handleOverrideTxtChange = (txt) => {
     let src
     this.judgeIsJSON(txt)
     this.setState({ txt, src })
@@ -92,7 +92,7 @@ export default class Index extends Component {
   }
 
   onResponseEditorChange = (newValue) => {
-    window.setting.ajaxInterceptor_rules[this.props.index].overrideTxt = newValue
+    window.setting.ajaxInterceptor_rules[this.props.index].overrideResponseFunc = newValue
     setChromeStorage('ajaxInterceptor_rules', window.setting.ajaxInterceptor_rules)
   }
 
@@ -114,7 +114,7 @@ export default class Index extends Component {
             className="overrideTxt"
             style={{ resize: 'none' }}
             value={this.state.txt}
-            onChange={e => this.handleSimpleOverrideTxtChange(e.target.value)}
+            onChange={e => this.handleOverrideTxtChange(e.target.value)}
           />
                 <Switch style={{ marginTop: '6px' }} onChange={this.handleJSONEditorSwitch} checkedChildren="JSON Editor"
                         unCheckedChildren="JSON Editor" size="small"/>
@@ -182,11 +182,11 @@ export default class Index extends Component {
                   <div>
                     <MonacoEditor
                       index={this.props.index}
-                      language="json"
-                      defaultValue={window.setting.ajaxInterceptor_rules[this.props.index].overrideTxt}
+                      language="javascript"
+                      defaultValue={window.setting.ajaxInterceptor_rules[this.props.index].overrideResponseFunc}
                       examples={RESPONSE_EXAMPLES}
                       onEditorChange={this.onResponseEditorChange}
-                      languageSelectOptions={["json"]} // 如果之后支持多语言切换，还要存储当前语言
+                      languageSelectOptions={["javascript"]} // 如果之后支持多语言切换，还要存储当前语言
                     />
                   </div>
                 )

@@ -2,7 +2,7 @@
 let ajax_interceptor_qoweifjqon = {
   settings: {
     ajaxInterceptor_switchOn: false,
-    ajaxInterceptor_always200On: false,
+    ajaxInterceptor_always200On: true,
     ajaxInterceptor_rules: [],
   },
   getMatchedInterface: ({ thisRequestUrl = '', thisMethod = '' }) => {
@@ -41,14 +41,45 @@ let ajax_interceptor_qoweifjqon = {
   myXHR: function () {
     let pageScriptEventDispatched = false
     const modifyResponse = () => {
-      // const [method, requestUrl] = this._openArgs
-      // const queryParams = ajax_tools_space.getRequestParams(requestUrl)
-      // const [requestPayload] = this._sendArgs
+      const [method, requestUrl] = this._openArgs
+      const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(requestUrl)
+      const [requestPayload] = this._sendArgs
       const matchedInterface = this._matchedInterface
-      if (matchedInterface && matchedInterface.overrideTxt) {
-        const { overrideTxt, match } = matchedInterface
-        this.responseText = overrideTxt
-        this.response = overrideTxt
+      if (matchedInterface && (matchedInterface.overrideTxt || matchedInterface.overrideResponseFunc)) {
+        const { overrideTxt, overrideResponseFunc, match, isExpert = false } = matchedInterface
+        let overrideResponse = overrideTxt
+        let overrideStatus = undefined
+        let overrideStatusText = undefined
+        // 专业模式，用函数替换
+        if (overrideResponseFunc && isExpert) {
+          const funcArgs = {
+            method,
+            payload: {
+              queryParams,
+              requestPayload
+            },
+            orgResponse: this.response,
+            orgStatus: this.status,
+            orgStatusText: this.statusText
+          }
+          const res = ajax_interceptor_qoweifjqon.executeStringFunction(overrideResponseFunc, funcArgs, 'response')
+          // 返回是对象才处理
+          if (typeof res === 'object' && res !== null) {
+            const {
+              response: newResponse = undefined,
+              status: newStatus = undefined,
+              statusText: newStatusText = undefined,
+            } = res
+            overrideResponse = newResponse
+            overrideStatus = newStatus
+            overrideStatusText = newStatusText
+          } else {
+            console.error(`[Ajax Modifier] ExecuteFunctionError: Please check your return in the response function. See more details in the examples. \n`)
+          }
+        }
+        // 没有返回不替换
+        this.responseText = overrideResponse !== undefined ? overrideResponse : this.responseText
+        this.response = overrideResponse !== undefined ? overrideResponse : this.response
         if (!pageScriptEventDispatched) {
           window.dispatchEvent(new CustomEvent("pageScript", {
             detail: { url: this.responseURL, match }
@@ -58,6 +89,8 @@ let ajax_interceptor_qoweifjqon = {
         if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_always200On && this.status !== 200) {
           this.status = 200
         }
+        this.status = overrideStatus !== undefined ? overrideStatus : this.status
+        this.statusText = overrideStatusText !== undefined ? overrideStatusText : this.statusText
       }
     }
 
@@ -133,7 +166,7 @@ let ajax_interceptor_qoweifjqon = {
               args[0] = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, args[0], 'payload');
             }
           }
-          // this._sendArgs = args
+          this._sendArgs = args
           xhr.send && xhr.send.apply(xhr, args)
         }
         continue
@@ -143,7 +176,7 @@ let ajax_interceptor_qoweifjqon = {
         this[attr] = xhr[attr].bind(xhr)
       } else {
         // responseText和response不是writeable的，但拦截时需要修改它，所以修改就存储在this[`_${attr}`]上
-        if (['responseText', 'response', 'status'].includes(attr)) {
+        if (['responseText', 'response', 'status', 'statusText'].includes(attr)) {
           Object.defineProperty(this, attr, {
             get: () => this[`_${attr}`] == undefined ? xhr[attr] : this[`_${attr}`],
             set: (val) => this[`_${attr}`] = val,
@@ -161,6 +194,21 @@ let ajax_interceptor_qoweifjqon = {
   },
   originalFetch: window.fetch.bind(window),
   myFetch: function (...args) {
+    const getOriginalResponse = async (stream) => {
+      let text = '';
+      const decoder = new TextDecoder('utf-8');
+      const reader = stream.getReader();
+      const processData = (result) => {
+        if (result.done) {
+          return text;
+        }
+        const value = result.value; // Uint8Array
+        text += decoder.decode(value, {stream: true});
+        // 读取下一个文件片段，重复处理步骤
+        return reader.read().then(processData);
+      };
+      return await reader.read().then(processData);
+    }
     const [requestUrl, data] = args;
     const matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({thisRequestUrl: requestUrl, thisMethod: data && data.method});
     if (matchedInterface && args) {
@@ -177,22 +225,59 @@ let ajax_interceptor_qoweifjqon = {
             requestUrl: args[0],
             queryParams
           }
-          args[0] = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data);
+          args[0] = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data, 'payload');
         } else {
-          data.body = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data.body);
+          data.body = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data.body, 'payload');
         }
       }
     }
-    return ajax_interceptor_qoweifjqon.originalFetch(...args).then((response) => {
+    return ajax_interceptor_qoweifjqon.originalFetch(...args).then(async (response) => {
       let txt = undefined
-      if (matchedInterface && matchedInterface.overrideTxt) {
+      let status = response.status
+      let statusText = response.statusText
+      if (matchedInterface && (matchedInterface.overrideTxt || matchedInterface.overrideResponseFunc)) {
         window.dispatchEvent(new CustomEvent("pageScript", {
           detail: { url: response.url, match: matchedInterface.match }
         }))
         txt = matchedInterface.overrideTxt
+        const { overrideTxt, overrideResponseFunc, isExpert = false } = matchedInterface
+        let overrideResponse = overrideTxt
+        let overrideStatus = undefined
+        let overrideStatusText = undefined
+        // 专业模式，用函数替换
+        if (overrideResponseFunc && isExpert) {
+          const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(requestUrl)
+          const orgResponse = await getOriginalResponse(response.body);
+          const funcArgs = {
+            method: data?.method,
+            payload: {
+              queryParams,
+              requestPayload: data?.body
+            },
+            orgResponse,
+            orgStatus: response.status,
+            orgStatusText: response.statusText
+          }
+          const res = ajax_interceptor_qoweifjqon.executeStringFunction(overrideResponseFunc, funcArgs, 'response')
+          if (typeof res === 'object' && res !== null) {
+            const {
+              response: newResponse = undefined,
+              status: newStatus = undefined,
+              statusText: newStatusText = undefined
+            } = res
+            overrideResponse = newResponse
+            overrideStatus = newStatus
+            overrideStatusText = newStatusText
+          } else {
+            console.error(`[Ajax Modifier] ExecuteFunctionError: Please check your return in the response function. See more details in the examples. \n`)
+          }
+        }
+        txt = overrideResponse
+        status = overrideStatus
+        statusText = overrideStatusText
       }
 
-      if (txt !== undefined) {
+      if (txt !== undefined || status !== undefined) {
         const stream = new ReadableStream({
           start(controller) {
             // const bufView = new Uint8Array(new ArrayBuffer(txt.length))
@@ -203,20 +288,27 @@ let ajax_interceptor_qoweifjqon = {
             controller.close()
           }
         })
-        let always200OnResponseParams = {}
+        // 初始化原始参数
+        let params = {
+          status: response.status,
+          statusText: response.statusText,
+          ok: response.ok
+        }
         if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_always200On) {
-          always200OnResponseParams = {
+          params = {
             status: 200,
             statusText: 'OK',
             ok: true
           }
         }
+        params = {
+          ...params,
+          status: status !== undefined ? status : params.status,
+          statusText: statusText !== undefined ? statusText : params.statusText,
+        }
         const newResponse = new Response(stream, {
           headers: response.headers,
-          status: response.status,
-          statusText: response.statusText,
-          ok: response.ok,
-          ...always200OnResponseParams
+          ...params
         })
         const proxy = new Proxy(newResponse, {
           get: function (target, name) {
