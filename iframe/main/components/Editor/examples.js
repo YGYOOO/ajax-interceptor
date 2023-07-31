@@ -119,9 +119,11 @@ const {
 let newResponse = JSON.parse(orgResponse)
 newResponse.message = 'Modify success!'
 
-/* return new response */
+/* return new response and status */
 return {
-  response: JSON.stringify(newResponse)
+  response: JSON.stringify(newResponse),
+  status: 200,
+  statusText: 'OK'
 }
 `
   },
@@ -129,6 +131,7 @@ return {
     egTitle: 'e.g. text',
     egText: `/**
  * Modify response here
+ * This example is of text type response.
  **/
 
 /* console to see the arguments */
@@ -154,7 +157,7 @@ if (method === 'post') {
   newResponse = 'Modify success!'
 }
 
-/* return new response */
+/* return new response and status */
 return {
   response: newResponse,
   status: 200,

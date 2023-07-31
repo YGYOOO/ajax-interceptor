@@ -47,11 +47,19 @@ let ajax_interceptor_qoweifjqon = {
       const matchedInterface = this._matchedInterface
       if (matchedInterface && (matchedInterface.overrideTxt || matchedInterface.overrideResponseFunc)) {
         const { overrideTxt, overrideResponseFunc, match, isExpert = false } = matchedInterface
-        let overrideResponse = overrideTxt
+        let overrideResponse = undefined
         let overrideStatus = undefined
         let overrideStatusText = undefined
-        // 专业模式，用函数替换
-        if (overrideResponseFunc && isExpert) {
+        if (overrideTxt && !isExpert) {
+          // 普通模式，直接替换
+          overrideResponse = overrideTxt
+          // 状态用200覆盖
+          if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_always200On && this.status !== 200) {
+            overrideStatus = 200
+            overrideStatusText = 'OK'
+          }
+        } else if (overrideResponseFunc && isExpert) {
+          // 专业模式，用函数替换
           const funcArgs = {
             method,
             payload: {
@@ -68,7 +76,7 @@ let ajax_interceptor_qoweifjqon = {
             const {
               response: newResponse = undefined,
               status: newStatus = undefined,
-              statusText: newStatusText = undefined,
+              statusText: newStatusText = undefined
             } = res
             overrideResponse = newResponse
             overrideStatus = newStatus
@@ -80,17 +88,14 @@ let ajax_interceptor_qoweifjqon = {
         // 没有返回不替换
         this.responseText = overrideResponse !== undefined ? overrideResponse : this.responseText
         this.response = overrideResponse !== undefined ? overrideResponse : this.response
+        this.status = overrideStatus !== undefined ? overrideStatus : this.status
+        this.statusText = overrideStatusText !== undefined ? overrideStatusText : this.statusText
         if (!pageScriptEventDispatched) {
           window.dispatchEvent(new CustomEvent("pageScript", {
             detail: { url: this.responseURL, match }
           }))
           pageScriptEventDispatched = true
         }
-        if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_always200On && this.status !== 200) {
-          this.status = 200
-        }
-        this.status = overrideStatus !== undefined ? overrideStatus : this.status
-        this.statusText = overrideStatusText !== undefined ? overrideStatusText : this.statusText
       }
     }
 
@@ -106,14 +111,14 @@ let ajax_interceptor_qoweifjqon = {
         }
         this.onreadystatechange = null
         continue
-      } else if (attr === 'onload') {
-        xhr.onload = (...args) => {
-          // 请求成功
-          modifyResponse()
-          this.onload && this.onload.apply(this, args)
-        }
-        this.onload = null
-        continue
+      // } else if (attr === 'onload') {
+        // xhr.onload = (...args) => {
+        //   // 请求成功
+        //   modifyResponse()
+        //   this.onload && this.onload.apply(this, args)
+        // }
+        // this.onload = null
+        // continue
       } else if (attr === 'open') {
         this.open = (...args) => {
           this._openArgs = args
@@ -232,20 +237,27 @@ let ajax_interceptor_qoweifjqon = {
       }
     }
     return ajax_interceptor_qoweifjqon.originalFetch(...args).then(async (response) => {
-      let txt = undefined
-      let status = response.status
-      let statusText = response.statusText
       if (matchedInterface && (matchedInterface.overrideTxt || matchedInterface.overrideResponseFunc)) {
         window.dispatchEvent(new CustomEvent("pageScript", {
           detail: { url: response.url, match: matchedInterface.match }
         }))
+        let txt = undefined
         txt = matchedInterface.overrideTxt
         const { overrideTxt, overrideResponseFunc, isExpert = false } = matchedInterface
-        let overrideResponse = overrideTxt
+        let overrideResponse = undefined
         let overrideStatus = undefined
         let overrideStatusText = undefined
-        // 专业模式，用函数替换
-        if (overrideResponseFunc && isExpert) {
+
+        if (overrideTxt && !isExpert) {
+          // 普通模式，直接替换
+          overrideResponse = overrideTxt
+          // 状态用200覆盖
+          if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_always200On && this.status !== 200) {
+            overrideStatus = 200
+            overrideStatusText = 'OK'
+          }
+        } else if (overrideResponseFunc && isExpert) {
+          // 专业模式，用函数替换
           const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(requestUrl)
           const orgResponse = await getOriginalResponse(response.body);
           const funcArgs = {
@@ -272,12 +284,7 @@ let ajax_interceptor_qoweifjqon = {
             console.error(`[Ajax Modifier] ExecuteFunctionError: Please check your return in the response function. See more details in the examples. \n`)
           }
         }
-        txt = overrideResponse
-        status = overrideStatus
-        statusText = overrideStatusText
-      }
-
-      if (txt !== undefined || status !== undefined) {
+        txt = overrideResponse !== undefined ? overrideResponse : response.responseText
         const stream = new ReadableStream({
           start(controller) {
             // const bufView = new Uint8Array(new ArrayBuffer(txt.length))
@@ -288,23 +295,9 @@ let ajax_interceptor_qoweifjqon = {
             controller.close()
           }
         })
-        // 初始化原始参数
         let params = {
-          status: response.status,
-          statusText: response.statusText,
-          ok: response.ok
-        }
-        if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_always200On) {
-          params = {
-            status: 200,
-            statusText: 'OK',
-            ok: true
-          }
-        }
-        params = {
-          ...params,
-          status: status !== undefined ? status : params.status,
-          statusText: statusText !== undefined ? statusText : params.statusText,
+          status: overrideStatus !== undefined ? overrideStatus : response.status,
+          statusText: overrideStatusText !== undefined ? overrideStatusText : response.statusText,
         }
         const newResponse = new Response(stream, {
           headers: response.headers,
@@ -324,13 +317,11 @@ let ajax_interceptor_qoweifjqon = {
             return target[name]
           }
         })
-
         for (let key in proxy) {
           if (typeof proxy[key] === 'function') {
             proxy[key] = proxy[key].bind(newResponse)
           }
         }
-
         return proxy
       } else {
         return response
