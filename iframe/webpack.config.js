@@ -1,5 +1,6 @@
 const path = require('path')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
+// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 module.exports = {
   entry: './main/index.js',
@@ -67,7 +68,8 @@ module.exports = {
   },
   plugins: [
     new MonacoWebpackPlugin({
-      languages: ["json", "javascript", "typescript"],
+      languages: ["json", "javascript"],
     }),
+    // new BundleAnalyzerPlugin()
   ]
 }

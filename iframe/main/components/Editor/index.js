@@ -14,9 +14,11 @@ const MonacoEditor = (props, ref) => {
   } = props
   const [editor, setEditor] = useState(null)
   const [language, setLanguage] = useState(props.language || 'javascript')
+  const [dropVisible, setDropVisible] = useState(true)
   const containerRef = useRef(null)
   useEffect(() => {
     if (!editor) {
+      monaco.languages.register({ id: 'text' })
       const editor = monaco.editor.create(editorRef.current, {
         value: '',
         language,
@@ -68,7 +70,7 @@ const MonacoEditor = (props, ref) => {
       const { egText, egLanguage = 'javascript' } = eg
       editor.getModel().setValue(egText)
       if (egLanguage !== language)
-      setLanguage(egLanguage)
+        setLanguage(egLanguage)
       monaco.editor.setModelLanguage(editor.getModel(), egLanguage)
     }
   }
@@ -83,6 +85,27 @@ const MonacoEditor = (props, ref) => {
     </Menu>
   )
 
+  // 进入页面展示下拉框
+  const visibleTimeout = useRef(null)
+  useEffect(() => {
+    visibleTimeout.current = setTimeout(() => {
+      handleVisibleChange(false)
+    }, 800)
+    return () => {
+      if (visibleTimeout) {
+        clearTimeout(visibleTimeout.current)
+        visibleTimeout.current = null
+      }
+    }
+  }, [])
+  const handleVisibleChange = function (newVal) {
+    if (visibleTimeout.current) {
+      clearTimeout(visibleTimeout.current)
+      visibleTimeout.current = null
+    }
+    setDropVisible(newVal)
+  }
+
   return <div className="monaco-editor-container" id="monaco-editor-container" ref={containerRef}>
     <div className="monaco-editor-header">
       <Select
@@ -95,23 +118,26 @@ const MonacoEditor = (props, ref) => {
           languageSelectOptions.map((lang) => <Select.Option key={lang} value={lang}>{lang}</Select.Option>)
         }
       </Select>
-      <div>
+      <div style={{ display: 'inline-flex', alignItems: 'center' }}>
         {
-          examples.length > 1 ? <Dropdown overlay={menu}>
+          examples.length > 1 ? <Dropdown overlay={menu} visible={dropVisible} trigger={['click', 'hover']}
+                                          onVisibleChange={handleVisibleChange}>
             <a onClick={(e) => e.preventDefault()}>
-              <span>
-                Example
-                <Icon type="down" className="down-button"/>
-              </span>
+              <div className="border-button">
+                <span>Example</span>
+                <Icon type="down" className="down-icon"/>
+              </div>
             </a>
-          </Dropdown> : <a
-            title="Example Case"
+          </Dropdown> : <div className="border-button"
             onClick={() => onAddExampleClick(examples[0])}
           >
-            Example
-          </a>
+            <span>Example</span>
+          </div>
         }
-        <Icon type="align-left" onClick={formatDocumentAction} className="align-button"/>
+
+        <div className="border-button" onClick={formatDocumentAction}>
+          <span>Format</span>
+        </div>
       </div>
     </div>
     <div

@@ -166,3 +166,15 @@ return {
 `
   }
 ]
+
+export const RESPONSE_SIMPLE_EXAMPLES = [
+  {
+    egTitle: 'e.g. json',
+    egLanguage: 'json',
+    egText: `{
+  "code": 0,
+  "message": "ok"
+}
+`
+  }
+]
