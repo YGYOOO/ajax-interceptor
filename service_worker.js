@@ -20,23 +20,29 @@ chrome.scripting.getRegisteredContentScripts({ ids: ["testing-scripts-gen"] },
 
 chrome.action.onClicked.addListener(function (tab) {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    if (contentLoadedIds.includes(tabs[0].id)) {
-      chrome.tabs.sendMessage(tabs[0].id, "toggle") //  try catch
-    } else {
-      chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id, allFrames: true },
-        files: ['content.js']
-      }).then(() => chrome.tabs.sendMessage(tabs[0].id, "toggle"))
-    }
+    handleContentSend(tabs[0].id, "toggle")
   })
 })
+
+function handleContentSend(tabId, params = null) {
+  if (contentLoadedIds.includes(tabId)) {
+    chrome.tabs.sendMessage(tabId, params)
+  } else {
+    chrome.scripting.executeScript({
+      target: { tabId, allFrames: true },
+      files: ['content.js']
+    }).then(() => {
+      chrome.tabs.sendMessage(tabId, params)
+    })
+  }
+}
 
 // 接收iframe传来的信息，转发给content.js
 chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'ajaxInterceptor' && msg.to === 'background') {
     if (msg.hasOwnProperty('contentScriptLoaded')) {
       msg.contentScriptLoaded && chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        tabs && tabs.length && contentLoadedIds.push(tabs[0].id)
+        tabs && tabs.length && !contentLoadedIds.includes(tabs[0].id) && contentLoadedIds.push(tabs[0].id)
       })
     }
     if (msg.key === 'ajaxInterceptor_switchOn') {
@@ -62,7 +68,7 @@ chrome.runtime.onMessage.addListener(msg => {
     }
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       if (tabs && tabs.length) {
-        chrome.tabs.sendMessage(tabs[0].id, { ...msg, to: 'content' })
+        handleContentSend(tabs[0].id, { ...msg, to: 'content' })
       } else {
         console.warn("[Ajax Modifier] Please refresh your page on the webpage instead of devtools.")
       }
