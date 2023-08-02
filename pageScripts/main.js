@@ -130,8 +130,8 @@ let ajax_interceptor_qoweifjqon = {
           const matchedInterface = this._matchedInterface
           // modify request
           if (matchedInterface) {
-            const { overridePayloadFunc } = matchedInterface
-            if (overridePayloadFunc && args[0] && args[1] && args[0].toUpperCase() === 'GET') {
+            const { overridePayloadFunc, isExpert = false } = matchedInterface
+            if (overridePayloadFunc && isExpert && args[0] && args[1] && args[0].toUpperCase() === 'GET') {
               const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(args[1])
               const data = {
                 requestUrl: args[1],
@@ -148,7 +148,7 @@ let ajax_interceptor_qoweifjqon = {
           // get headers
           this._headerArgs = this._headerArgs ? Object.assign(this._headerArgs, {[args[0]]: args[1]}) : {[args[0]]: args[1]};
           const matchedInterface = this._matchedInterface;
-          if (!(matchedInterface && matchedInterface.overrideHeadersFunc)) { // 没有要拦截修改或添加的header
+          if (!(matchedInterface && matchedInterface.overrideHeadersFunc && matchedInterface.isExpert)) { // 没有要拦截修改或添加的header
             xhr.setRequestHeader && xhr.setRequestHeader.apply(xhr, args);
           }
         }
@@ -158,8 +158,8 @@ let ajax_interceptor_qoweifjqon = {
           const matchedInterface = this._matchedInterface
           if (matchedInterface) {
             // modify headers
-            const { overrideHeadersFunc, overridePayloadFunc } = matchedInterface
-            if (overrideHeadersFunc) {
+            const { overrideHeadersFunc, overridePayloadFunc, isExpert = false } = matchedInterface
+            if (overrideHeadersFunc && isExpert) {
               const headers = ajax_interceptor_qoweifjqon.executeStringFunction(overrideHeadersFunc, this._headerArgs, 'headers')
               Object.keys(headers).forEach((key) => {
                 xhr.setRequestHeader && xhr.setRequestHeader.apply(xhr, [key, headers[key]]);
@@ -167,7 +167,7 @@ let ajax_interceptor_qoweifjqon = {
             }
             // modify not GET payload
             const [method] = this._openArgs
-            if (overridePayloadFunc && method !== 'GET') {
+            if (overridePayloadFunc && isExpert && method !== 'GET') {
               args[0] = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, args[0], 'payload');
             }
           }
@@ -217,12 +217,12 @@ let ajax_interceptor_qoweifjqon = {
     const [requestUrl, data] = args;
     const matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({thisRequestUrl: requestUrl, thisMethod: data && data.method});
     if (matchedInterface && args) {
-      const { overrideHeadersFunc, overridePayloadFunc } = matchedInterface;
-      if (overrideHeadersFunc && args[1]) {
+      const { overrideHeadersFunc, overridePayloadFunc, isExpert = false } = matchedInterface;
+      if (overrideHeadersFunc && isExpert && args[1]) {
         const headers = ajax_interceptor_qoweifjqon.executeStringFunction(overrideHeadersFunc, this._headerArgs, 'headers')
         args[1].headers = headers
       }
-      if (overridePayloadFunc && args[0] && args[1]) {
+      if (overridePayloadFunc && isExpert && args[0] && args[1]) {
         const { method } = args[1]
         if (['GET', 'HEAD'].includes(method.toUpperCase())) {
           const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(args[0]);
