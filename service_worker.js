@@ -1,4 +1,5 @@
 let contentLoadedIds = []
+let lastTabId = null
 
 chrome.scripting.getRegisteredContentScripts({ ids: ["testing-scripts-gen"] },
   async (scripts) => {
@@ -27,9 +28,11 @@ chrome.action.onClicked.addListener(function (tab) {
 // 页面关闭，移除id
 chrome.tabs.onRemoved.addListener(function (tabId) {
   contentLoadedIds = contentLoadedIds.filter(id => id !== tabId)
+  if (lastTabId === tabId) lastTabId = null
 })
 
 function handleContentSend(tabId, params = null) {
+  lastTabId = tabId
   if (contentLoadedIds.includes(tabId)) {
     chrome.tabs.sendMessage(tabId, params)
   } else {
@@ -74,6 +77,8 @@ chrome.runtime.onMessage.addListener(msg => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       if (tabs && tabs.length) {
         handleContentSend(tabs[0].id, { ...msg, to: 'content' })
+      } else if (lastTabId !== null) {
+        handleContentSend(lastTabId, { ...msg, to: 'content' })
       } else {
         console.warn("[Ajax Modifier] Please refresh your page on the webpage instead of devtools.")
       }
