@@ -60,6 +60,7 @@ export default class Main extends Component {
     interceptedRequests: {},
     settingModalVisible: false,
     imageModalVisible: false,
+    infoModalVisible: false,
     positionClass: 'suspend',
     customFunction: {
       panelPosition: 0
@@ -184,10 +185,9 @@ export default class Main extends Component {
       customFunction: window.setting.customFunction
     })
   }
-  handleSettingModalSubmit = () => {
-    this.setState({ settingModalVisible: false }, () => {
-      window.setting.customFunction = this.state.customFunction
-      this.set('customFunction', window.setting.customFunction)
+  handleSettingModalConfirm = () => {
+    this.setState({
+      infoModalVisible: true
     })
   }
   handleSettingModalCancel = () => {
@@ -209,6 +209,16 @@ export default class Main extends Component {
   }
   handleImageModalClose = () => {
     this.setState({ imageModalVisible: false })
+  }
+  handleInfoModalClose = () => {
+    this.setState({
+      imageModalVisible: false,
+      infoModalVisible: false,
+      settingModalVisible: false
+    }, () => {
+      window.setting.customFunction = this.state.customFunction
+      this.set('customFunction', window.setting.customFunction)
+    })
   }
 
   render() {
@@ -375,7 +385,7 @@ export default class Main extends Component {
             <Button key="Cancel" onClick={this.handleSettingModalCancel}>
               Cancel
             </Button>,
-            <Button key="Submit" type="primary" onClick={this.handleSettingModalSubmit}>
+            <Button key="Submit" type="primary" onClick={this.handleSettingModalConfirm}>
               Submit
             </Button>,
           ]}
@@ -396,8 +406,23 @@ export default class Main extends Component {
               </Radio>
             </Radio.Group>
           </div>
-          <div style={{ color: '#1890ff', 'lineHeight': '16px', 'marginTop': '16px' }}>
+          <div style={{ color: '#1890ff', lineHeight: '16px', marginTop: '16px' }}>
             Please refresh the page and reopen the devtools after submitting.
+          </div>
+        </Modal>
+        <Modal
+          visible={this.state.infoModalVisible}
+          onCancel={this.handleInfoModalClose}
+          footer={null}
+          closable={false}
+          width="410px"
+          style={{ marginTop: 50 }}
+        >
+          <div style={{ color: '#1890ff', margin: '16px 0' }}>
+            Please refresh the page and reopen the devtools after submitting.
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button type="primary" onClick={this.handleInfoModalClose} style={{ float: 'right' }}>OK</Button>
           </div>
         </Modal>
         <Modal
