@@ -22,8 +22,14 @@ const buildUUID = () => {
 export default class Main extends Component {
   constructor() {
     super()
-    chrome.runtime.onMessage.addListener(({ type, to, url, match }) => {
+    chrome.runtime.onMessage.addListener(({ type, to, url, match, contentScriptLoaded = false, showFreshTip = false }) => {
       if (type === 'ajaxInterceptor' && to === 'iframe') {
+        if (contentScriptLoaded || showFreshTip) {
+          this.setState({
+            showRefreshTip: showFreshTip
+          })
+          return
+        }
         const { interceptedRequests } = this.state
         if (!interceptedRequests[match]) interceptedRequests[match] = []
 
@@ -64,7 +70,8 @@ export default class Main extends Component {
     positionClass: 'suspend',
     customFunction: {
       panelPosition: 0
-    }
+    },
+    showRefreshTip: false
   }
 
   componentDidMount() {
@@ -235,6 +242,13 @@ export default class Main extends Component {
             style={{ fontSize: '22px', color: '#1890ff', cursor: 'pointer', float: 'right' }}
             onClick={this.showSettingModal}
           />
+          {
+            this.state.showRefreshTip ? (
+              <div style={{ color: '#1890ff', lineHeight: '16px', marginTop: '16px' }}>
+                Please Refresh your page after changing rules.
+              </div>
+            ) : ''
+          }
         </div>
         <div className={window.setting.ajaxInterceptor_switchOn ? 'setting-body' : 'setting-body setting-body-hidden'}>
           {window.setting.ajaxInterceptor_rules && window.setting.ajaxInterceptor_rules.length > 0 ? (

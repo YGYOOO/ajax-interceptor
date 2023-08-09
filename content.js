@@ -118,3 +118,7 @@ window.addEventListener("pageScript", function(event) {
 // document.documentElement.appendChild(s)
 
 chrome.runtime.sendMessage(chrome.runtime.id, {type: 'ajaxInterceptor', to: 'background', contentScriptLoaded: true})
+
+if (isDevtoolPosition) {
+  chrome.runtime.sendMessage(chrome.runtime.id, {type: 'ajaxInterceptor', to: 'iframe', contentScriptLoaded: true})
+}
