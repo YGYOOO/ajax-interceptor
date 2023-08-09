@@ -24,6 +24,11 @@ chrome.action.onClicked.addListener(function (tab) {
   })
 })
 
+// 页面关闭，移除id
+chrome.tabs.onRemoved.addListener(function (tabId) {
+  contentLoadedIds = contentLoadedIds.filter(id => id !== tabId)
+})
+
 function handleContentSend(tabId, params = null) {
   if (contentLoadedIds.includes(tabId)) {
     chrome.tabs.sendMessage(tabId, params)

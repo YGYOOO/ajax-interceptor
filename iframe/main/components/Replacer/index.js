@@ -71,7 +71,7 @@ export default class Index extends Component {
   render() {
     return (
       <>
-        <Switch onChange={this.handleExpertSwitch} size="small"
+        <Switch onChange={this.handleExpertSwitch} size="small" checked={this.state.isExpert}
                 checkedChildren=" Advanced Mode" unCheckedChildren="Advanced Mode " />
         {
           !this.state.isExpert && (

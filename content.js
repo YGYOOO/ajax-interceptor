@@ -15,7 +15,7 @@ script.setAttribute('src', chrome.runtime.getURL('pageScripts/main.js'))
 document.documentElement.appendChild(script)
 
 script.addEventListener('load', () => {
-  chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules', 'panel_position'], (result) => {
+  chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules'], (result) => {
     if (result.hasOwnProperty('ajaxInterceptor_switchOn')) {
       postMessage({type: 'ajaxInterceptor', to: 'pageScript', key: 'ajaxInterceptor_switchOn', value: result.ajaxInterceptor_switchOn})
     }
@@ -28,7 +28,9 @@ script.addEventListener('load', () => {
 
 let iframe
 let iframeLoaded = false
+let isDevtoolPosition = true
 chrome.storage.local.get(['customFunction'], (result) => {
+  isDevtoolPosition = !!result.customFunction?.panelPosition
   if (!result.customFunction?.panelPosition) {
     if (['complete', 'interactive'].includes(document.readyState)) {
       insertIframe()
@@ -87,7 +89,7 @@ chrome.runtime.onMessage.addListener(msg => {
 
 // 接收pageScript传来的信息，转发给iframe
 window.addEventListener("pageScript", function(event) {
-  if (iframeLoaded) {
+  if (iframeLoaded || isDevtoolPosition) {
     chrome.runtime.sendMessage({type: 'ajaxInterceptor', to: 'iframe', ...event.detail})
   } else {
     let count = 0

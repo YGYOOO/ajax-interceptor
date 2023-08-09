@@ -67,7 +67,7 @@ export default class Main extends Component {
   }
 
   componentDidMount() {
-    this.updateAddBtnTop_interval()
+    this.updateAddBtnTop_interval({ timeout: 2000 })
   }
 
 
@@ -175,11 +175,6 @@ export default class Main extends Component {
     this.set('ajaxInterceptor_switchOn', window.setting.ajaxInterceptor_switchOn)
 
     this.forceUpdate()
-  }
-
-  handlePanelSwitchChange = () => {
-    window.setting.panel_position = window.setting.panel_position ? 0 : 1
-    this.set('panel_position', window.setting.panel_position)
   }
 
   // 弹窗逻辑
