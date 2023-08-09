@@ -67,7 +67,7 @@ export default class Main extends Component {
   }
 
   componentDidMount() {
-    this.updateAddBtnTop_interval({ timeout: 2000 })
+    this.updateAddBtnTop_interval()
   }
 
 
