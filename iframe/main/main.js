@@ -420,9 +420,6 @@ export default class Main extends Component {
               </Radio>
             </Radio.Group>
           </div>
-          <div style={{ color: '#1890ff', lineHeight: '16px', marginTop: '16px' }}>
-            Please refresh the page and reopen the devtools after submitting.
-          </div>
         </Modal>
         <Modal
           visible={this.state.infoModalVisible}
@@ -430,7 +427,7 @@ export default class Main extends Component {
           footer={null}
           closable={false}
           width="410px"
-          style={{ marginTop: 50 }}
+          style={{ marginTop: 10 }}
         >
           <div style={{ color: '#1890ff', margin: '16px 0' }}>
             Please refresh the page and reopen the devtools after submitting.
