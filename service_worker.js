@@ -1,4 +1,5 @@
 let contentLoadedIds = []
+let lastPanelPosition = 0
 
 chrome.scripting.getRegisteredContentScripts({ ids: ["testing-scripts-gen"] },
   async (scripts) => {
@@ -49,6 +50,11 @@ chrome.runtime.onMessage.addListener(msg => {
       msg.contentScriptLoaded && chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         tabs && tabs.length && !contentLoadedIds.includes(tabs[0].id) && contentLoadedIds.push(tabs[0].id)
       })
+      // 收到的传送信息是contentScriptLoaded，说明是刷新状态，更新popup
+      chrome.storage.local.get(['customFunction'], (result) => {
+        lastPanelPosition = !!result.customFunction?.panelPosition
+        setPopup(!!result.customFunction?.panelPosition)
+      })
     }
     if (msg.key === 'ajaxInterceptor_switchOn') {
       if (msg.value === true) {
@@ -71,11 +77,14 @@ chrome.runtime.onMessage.addListener(msg => {
         })
       }
     }
+    if (msg.key === 'customFunction') {
+      setPopup(msg.value.panelPosition)
+    }
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       if (tabs && tabs.length) {
         handleContentSend(tabs[0].id, { ...msg, to: 'content' })
       } else if (msg.hasOwnProperty('iframeScriptLoaded')) {
-        // 收到的传送信息是iframeScriptLoaded，说明是刷新状态，提示需要在页面上刷新（只有在suspend时才会有此类情况）
+        // 收到的传送信息是iframeScriptLoaded，说明是suspend刷新状态，提示需要在页面上刷新（只有在suspend时才会有此类情况）
         console.warn("[Ajax Modifier] Please refresh your page on the webpage instead of devtools.")
       } else if (msg.key === "ajaxInterceptor_rules" || msg.key === 'ajaxInterceptor_switchOn') {
         // 收到的传送信息是修改rules且拿不到tab，说明内容也更新不到page script上，提示需要刷新（只有在分离的devtools时才会有此类情况）
@@ -85,7 +94,7 @@ chrome.runtime.onMessage.addListener(msg => {
   }
 })
 
-chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules'], (result) => {
+chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules', 'customFunction'], (result) => {
   if (result.hasOwnProperty('ajaxInterceptor_switchOn')) {
     if (result.ajaxInterceptor_switchOn) {
       chrome.action.setIcon({ path: "/images/16.png" })
@@ -94,3 +103,18 @@ chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules'], 
     }
   }
 })
+
+function setPopup(curPanelPosition = false) {
+  if (lastPanelPosition && !curPanelPosition) {
+    chrome.action.setPopup({ popup: 'popupSusFresh.html' })
+  } else {
+    chrome.action.setPopup({ popup: curPanelPosition ? 'popupDev.html' : '' })
+  }
+  // 面板从悬浮切换为devtools，悬浮面板消失
+  if (!lastPanelPosition && curPanelPosition) {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      handleContentSend(tabs[0].id, "toggle")
+    })
+  }
+  lastPanelPosition = curPanelPosition
+}
