@@ -105,9 +105,11 @@ chrome.storage.local.get(['ajaxInterceptor_switchOn', 'ajaxInterceptor_rules', '
 })
 
 function setPopup(curPanelPosition = false) {
+  // panelPosition - 0:页面悬浮面板, 1:devTools
+  // 面板从devtools切换为悬浮，提示需要刷新
   if (lastPanelPosition && !curPanelPosition) {
     chrome.action.setPopup({ popup: 'popupSusFresh.html' })
-  } else {
+  } else {   // 其他情况，判断当前是devtools，则提示打开devtools
     chrome.action.setPopup({ popup: curPanelPosition ? 'popupDev.html' : '' })
   }
   // 面板从悬浮切换为devtools，悬浮面板消失

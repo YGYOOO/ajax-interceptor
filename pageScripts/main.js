@@ -2,9 +2,10 @@
 let ajax_interceptor_qoweifjqon = {
   settings: {
     ajaxInterceptor_switchOn: false,
-    ajaxInterceptor_always200On: true,
+    ajaxInterceptor_always200On: true, // 默认开启，后期可以扩展成设置项
     ajaxInterceptor_rules: [],
   },
+  // 获取匹配到的规则项
   getMatchedInterface: ({ thisRequestUrl = '', thisMethod = '' }) => {
     return ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.find(item => {
       const { filterType = 'normal', limitMethod = 'ALL', switchOn = true, match } = item
@@ -14,6 +15,7 @@ let ajax_interceptor_qoweifjqon = {
       return switchOn && matchedMethod && matchedRequest
     })
   },
+  // 执行用户输入的函数，如果有错误会抛出到控制台
   executeStringFunction: (stringFunction, args, funcName = '') => {
     try {
       stringFunction = (new Function('...args', stringFunction))(args)
