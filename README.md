@@ -26,6 +26,12 @@ Example video：https://www.youtube.com/watch?v=OL87EPOEVIU
 3. This extension only overrides the response data in the XMLHTTPRequest object as well as the fetch method. The "original" response which you can see in DevTools' "Network" panel will not be changed.
 
 ## Release Notes
+version 1.5.1:
+- add advanced modes for users to encode and modify request headers, request payloads, and responses
+- support responses with the non-200 status
+- add strong tips to remind users of settings related to the devtools
+- optimize the user interface
+
 version 1.4.1:
 - add feature of matched methods  
 - add setting of panel positions, including suspended position and devtools position

@@ -30,6 +30,12 @@ chrome商店地址（推荐，自动更新。需翻墙）：https://chrome.googl
 
 
 ## 更新说明
+version 1.5.0:
+- 新增专业模式，支持用户编码修改请求headers、payload以及响应
+- 支持非200状态码的响应修改
+- 添加强提醒，用于提示devtools相关设置
+- 优化普通模式下的UI
+
 version 1.4.1:
 - 新增拦截匹配method的功能
 - 新增设置面板显示位置，提供悬浮和devtools两种位置

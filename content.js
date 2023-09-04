@@ -28,7 +28,7 @@ script.addEventListener('load', () => {
 
 let iframe
 let iframeLoaded = false
-let isDevtoolPosition = true
+let isDevtoolPosition = false
 chrome.storage.local.get(['customFunction'], (result) => {
   isDevtoolPosition = !!result.customFunction?.panelPosition
   if (!result.customFunction?.panelPosition) {
