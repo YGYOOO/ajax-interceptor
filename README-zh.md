@@ -30,6 +30,9 @@ chrome商店地址（推荐，自动更新。需翻墙）：https://chrome.googl
 
 
 ## 更新说明
+version 1.5.2:
+- 修复了onload不拦截的问题
+
 version 1.5.1:
 - 新增专业模式，支持用户编码修改请求headers、payload以及响应
 - 支持非200状态码的响应修改
