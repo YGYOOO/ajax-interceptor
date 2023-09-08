@@ -113,14 +113,14 @@ let ajax_interceptor_qoweifjqon = {
         }
         this.onreadystatechange = null
         continue
-      // } else if (attr === 'onload') {
-        // xhr.onload = (...args) => {
-        //   // 请求成功
-        //   modifyResponse()
-        //   this.onload && this.onload.apply(this, args)
-        // }
-        // this.onload = null
-        // continue
+      } else if (attr === 'onload') {
+        xhr.onload = (...args) => {
+          // 请求成功
+          modifyResponse()
+          this.onload && this.onload.apply(this, args)
+        }
+        this.onload = null
+        continue
       } else if (attr === 'open') {
         this.open = (...args) => {
           this._openArgs = args
