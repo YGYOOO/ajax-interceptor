@@ -30,6 +30,9 @@ chrome商店地址（推荐，自动更新。需翻墙）：https://chrome.googl
 
 
 ## 更新说明
+version 1.5.3:
+- 添加请求url自动补全的功能，以此修复部分请求无法拦截的问题
+
 version 1.5.2:
 - 修复了onload不拦截的问题
 

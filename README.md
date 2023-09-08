@@ -26,6 +26,9 @@ Example video：https://www.youtube.com/watch?v=OL87EPOEVIU
 3. This extension only overrides the response data in the XMLHTTPRequest object as well as the fetch method. The "original" response which you can see in DevTools' "Network" panel will not be changed.
 
 ## Release Notes
+version 1.5.3:
+- add request url autofill to fix matching issues
+
 version 1.5.2:
 - fix not intercepting in the onload situation 
 
