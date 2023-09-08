@@ -39,6 +39,28 @@ let ajax_interceptor_qoweifjqon = {
     });
     return keyValueObj;
   },
+  getCompleteUrl: (inputUrl) => {
+    let url = inputUrl.trim()
+    const protocol = window.location.protocol
+    const host = window.location.host
+    const currentUrl = window.location.href
+    try {
+      // 如果解析成功，表示输入是完整的URL，不需要处理
+      new URL(url)
+    } catch (e) {
+      if (url.startsWith("./") || url.startsWith("../")) {
+        // 相对路由
+        url = new URL(url, currentUrl).href
+      }else if (url.startsWith("//")) {
+        // 只缺少协议，补全协议
+        url = protocol + url
+      } else {
+        // 既没有协议也没有域名，补全域名和协议
+        url = protocol + "//" + host + (url.startsWith("/") ? "" : "/") + url
+      }
+    }
+    return url
+  },
   originalXHR: window.XMLHttpRequest,
   myXHR: function () {
     let pageScriptEventDispatched = false
@@ -126,7 +148,7 @@ let ajax_interceptor_qoweifjqon = {
           this._openArgs = args
           const [method, requestUrl] = args
           this._matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({
-            thisRequestUrl: requestUrl,
+            thisRequestUrl: ajax_interceptor_qoweifjqon.getCompleteUrl(requestUrl),
             thisMethod: method
           })
           const matchedInterface = this._matchedInterface
@@ -217,7 +239,10 @@ let ajax_interceptor_qoweifjqon = {
       return await reader.read().then(processData);
     }
     const [requestUrl, data] = args;
-    const matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({thisRequestUrl: requestUrl, thisMethod: data && data.method});
+    const matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({
+      thisRequestUrl: ajax_interceptor_qoweifjqon.getCompleteUrl(requestUrl),
+      thisMethod: data && data.method
+    })
     if (matchedInterface && args) {
       const { overrideHeadersFunc, overridePayloadFunc, isExpert = false } = matchedInterface;
       if (overrideHeadersFunc && isExpert && args[1]) {
