@@ -10,7 +10,7 @@ English | [简体中文](./README-zh.md)
 [![](https://img.shields.io/badge/Follow%20@卧槽竟然是YGY的微博--brightgreen.svg?logo=Sina%20Weibo&style=social)](https://weibo.com/u/5352731024)
 [![](https://img.shields.io/badge/Follow%20@YGYOOO--brightgreen.svg?logo=Twitter&style=social)](https://twitter.com/YGYOOO)
 
-A chrome extension for modifing ajax responses easily. You can use it to debug errors or mock data.
+A chrome extension for modifing any ajax requests or responses easily. You can use it to debug errors or mock data.
 
 ## Install
 https://chrome.google.com/webstore/detail/ajax-interceptor/nhpjggchkhnlbgdfcbgpdpkifemomkpg   
