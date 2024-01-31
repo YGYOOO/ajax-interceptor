@@ -239,8 +239,18 @@ let ajax_interceptor_qoweifjqon = {
       return await reader.read().then(processData);
     }
     const [requestUrl, data] = args;
+
+
+    let inputUrl = ''
+
+    if (typeof requestUrl === 'string') {
+      inputUrl = requestUrl
+    } else if (typeof requestUrl === 'object') {
+      inputUrl = requestUrl.url || ''
+    }
+
     const matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({
-      thisRequestUrl: ajax_interceptor_qoweifjqon.getCompleteUrl(requestUrl),
+      thisRequestUrl: ajax_interceptor_qoweifjqon.getCompleteUrl(inputUrl),
       thisMethod: data && data.method
     })
     if (matchedInterface && args) {
