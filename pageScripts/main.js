@@ -6,9 +6,14 @@ let ajax_interceptor_qoweifjqon = {
     ajaxInterceptor_rules: [],
   },
   // 获取匹配到的规则项
-  getMatchedInterface: ({ thisRequestUrl = '', thisMethod = '' }) => {
+  getMatchedInterface: ({
+    thisRequestUrl = '',
+    thisMethod = ''
+  }) => {
     return ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_rules.find(item => {
-      const { filterType = 'normal', limitMethod = 'ALL', switchOn = true, match } = item
+      const {
+        filterType = 'normal', limitMethod = 'ALL', switchOn = true, match
+      } = item
       const matchedMethod = thisMethod === limitMethod || limitMethod === 'ALL'
       const matchedRequest = (filterType === 'normal' && thisRequestUrl.indexOf(match) > -1) ||
         (filterType === 'regex' && thisRequestUrl.match(new RegExp(match, 'i')))
@@ -34,7 +39,9 @@ let ajax_interceptor_qoweifjqon = {
     keyValueArr.forEach((item) => {
       // 保证中间不会把=给忽略掉
       const itemArr = item.replace('=', '〓').split('〓');
-      const itemObj = {[itemArr[0]]: itemArr[1]};
+      const itemObj = {
+        [itemArr[0]]: itemArr[1]
+      };
       keyValueObj = Object.assign(keyValueObj, itemObj);
     });
     return keyValueObj;
@@ -51,7 +58,7 @@ let ajax_interceptor_qoweifjqon = {
       if (url.startsWith("./") || url.startsWith("../")) {
         // 相对路由
         url = new URL(url, currentUrl).href
-      }else if (url.startsWith("//")) {
+      } else if (url.startsWith("//")) {
         // 只缺少协议，补全协议
         url = protocol + url
       } else {
@@ -70,7 +77,12 @@ let ajax_interceptor_qoweifjqon = {
       const [requestPayload] = this._sendArgs
       const matchedInterface = this._matchedInterface
       if (matchedInterface && (matchedInterface.overrideTxt || matchedInterface.overrideResponseFunc)) {
-        const { overrideTxt, overrideResponseFunc, match, isExpert = false } = matchedInterface
+        const {
+          overrideTxt,
+          overrideResponseFunc,
+          match,
+          isExpert = false
+        } = matchedInterface
         let overrideResponse = undefined
         let overrideStatus = undefined
         let overrideStatusText = undefined
@@ -116,7 +128,10 @@ let ajax_interceptor_qoweifjqon = {
         this.statusText = overrideStatusText !== undefined ? overrideStatusText : this.statusText
         if (!pageScriptEventDispatched) {
           window.dispatchEvent(new CustomEvent("pageScript", {
-            detail: { url: this.responseURL, match }
+            detail: {
+              url: this.responseURL,
+              match
+            }
           }))
           pageScriptEventDispatched = true
         }
@@ -154,7 +169,10 @@ let ajax_interceptor_qoweifjqon = {
           const matchedInterface = this._matchedInterface
           // modify request
           if (matchedInterface) {
-            const { overridePayloadFunc, isExpert = false } = matchedInterface
+            const {
+              overridePayloadFunc,
+              isExpert = false
+            } = matchedInterface
             if (overridePayloadFunc && isExpert && args[0] && args[1] && args[0].toUpperCase() === 'GET') {
               const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(args[1])
               const data = {
@@ -170,7 +188,11 @@ let ajax_interceptor_qoweifjqon = {
       } else if (attr === 'setRequestHeader') {
         this.setRequestHeader = (...args) => {
           // get headers
-          this._headerArgs = this._headerArgs ? Object.assign(this._headerArgs, {[args[0]]: args[1]}) : {[args[0]]: args[1]};
+          this._headerArgs = this._headerArgs ? Object.assign(this._headerArgs, {
+            [args[0]]: args[1]
+          }) : {
+            [args[0]]: args[1]
+          };
           const matchedInterface = this._matchedInterface;
           if (!(matchedInterface && matchedInterface.overrideHeadersFunc && matchedInterface.isExpert)) { // 没有要拦截修改或添加的header
             xhr.setRequestHeader && xhr.setRequestHeader.apply(xhr, args);
@@ -182,7 +204,11 @@ let ajax_interceptor_qoweifjqon = {
           const matchedInterface = this._matchedInterface
           if (matchedInterface) {
             // modify headers
-            const { overrideHeadersFunc, overridePayloadFunc, isExpert = false } = matchedInterface
+            const {
+              overrideHeadersFunc,
+              overridePayloadFunc,
+              isExpert = false
+            } = matchedInterface
             if (overrideHeadersFunc && isExpert) {
               const headers = ajax_interceptor_qoweifjqon.executeStringFunction(overrideHeadersFunc, this._headerArgs, 'headers')
               Object.keys(headers).forEach((key) => {
@@ -222,7 +248,8 @@ let ajax_interceptor_qoweifjqon = {
     }
   },
   originalFetch: window.fetch.bind(window),
-  myFetch: function (...args) {
+  myFetch: async function (...args) {
+
     const getOriginalResponse = async (stream) => {
       let text = '';
       const decoder = new TextDecoder('utf-8');
@@ -232,14 +259,20 @@ let ajax_interceptor_qoweifjqon = {
           return text;
         }
         const value = result.value; // Uint8Array
-        text += decoder.decode(value, {stream: true});
+        text += decoder.decode(value, {
+          stream: true
+        });
         // 读取下一个文件片段，重复处理步骤
         return reader.read().then(processData);
       };
       return await reader.read().then(processData);
     }
-    const [requestUrl, data] = args;
 
+    const isReadableStream = (obj) => {
+      return obj instanceof ReadableStream
+    }
+
+    let [requestUrl, data] = args;
 
     let inputUrl = ''
 
@@ -247,6 +280,10 @@ let ajax_interceptor_qoweifjqon = {
       inputUrl = requestUrl
     } else if (typeof requestUrl === 'object') {
       inputUrl = requestUrl.url || ''
+      // readbleStream 的时候，data(args[1]存在空的情况)
+      if (!data) {
+        data = requestUrl
+      }
     }
 
     const matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({
@@ -254,33 +291,56 @@ let ajax_interceptor_qoweifjqon = {
       thisMethod: data && data.method
     })
     if (matchedInterface && args) {
-      const { overrideHeadersFunc, overridePayloadFunc, isExpert = false } = matchedInterface;
-      if (overrideHeadersFunc && isExpert && args[1]) {
+      const {
+        overrideHeadersFunc,
+        overridePayloadFunc,
+        isExpert = false
+      } = matchedInterface;
+      if (overrideHeadersFunc && isExpert && data) {
         const headers = ajax_interceptor_qoweifjqon.executeStringFunction(overrideHeadersFunc, this._headerArgs, 'headers')
         args[1].headers = headers
       }
-      if (overridePayloadFunc && isExpert && args[0] && args[1]) {
-        const { method } = args[1]
+      if (overridePayloadFunc && isExpert && requestUrl && data) {
+        const {
+          method
+        } = data
         if (['GET', 'HEAD'].includes(method.toUpperCase())) {
-          const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(args[0]);
+          const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(inputUrl);
           const data = {
-            requestUrl: args[0],
+            requestUrl: inputUrl,
             queryParams
           }
           args[0] = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data, 'payload');
         } else {
-          data.body = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data.body, 'payload');
+          const dataer = await ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data.body, 'payload');
+          if (isReadableStream(dataer)) {
+            // const [body1] = dataer.tee()
+            args[0] = new Request(args[0], {
+              body: dataer,
+              duplex: 'half'
+            });
+          } else {
+            data.body = dataer
+          }
         }
       }
     }
+
     return ajax_interceptor_qoweifjqon.originalFetch(...args).then(async (response) => {
       if (matchedInterface && (matchedInterface.overrideTxt || matchedInterface.overrideResponseFunc)) {
         window.dispatchEvent(new CustomEvent("pageScript", {
-          detail: { url: response.url, match: matchedInterface.match }
+          detail: {
+            url: response.url,
+            match: matchedInterface.match
+          }
         }))
         let txt = undefined
         txt = matchedInterface.overrideTxt
-        const { overrideTxt, overrideResponseFunc, isExpert = false } = matchedInterface
+        const {
+          overrideTxt,
+          overrideResponseFunc,
+          isExpert = false
+        } = matchedInterface
         let overrideResponse = undefined
         let overrideStatus = undefined
         let overrideStatusText = undefined
@@ -298,10 +358,10 @@ let ajax_interceptor_qoweifjqon = {
           const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(requestUrl)
           const orgResponse = await getOriginalResponse(response.body);
           const funcArgs = {
-            method: data?.method,
+            method: data.method,
             payload: {
               queryParams,
-              requestPayload: data?.body
+              requestPayload: data.body
             },
             orgResponse,
             orgStatus: response.status,
