@@ -358,10 +358,10 @@ let ajax_interceptor_qoweifjqon = {
           const queryParams = ajax_interceptor_qoweifjqon.getRequestParams(requestUrl)
           const orgResponse = await getOriginalResponse(response.body);
           const funcArgs = {
-            method: data.method,
+            method: data?.method,
             payload: {
               queryParams,
-              requestPayload: data.body
+              requestPayload: data?.body
             },
             orgResponse,
             orgStatus: response.status,
