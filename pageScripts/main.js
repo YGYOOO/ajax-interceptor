@@ -268,6 +268,46 @@ let ajax_interceptor_qoweifjqon = {
       return await reader.read().then(processData);
     }
 
+    async function readReadableStream(readableStream) {
+      const reader = readableStream.getReader();
+      let chunks = [];
+      let done, value;
+
+      while ({
+          done,
+          value
+        } = await reader.read(), !done) {
+        chunks.push(value);
+      }
+
+      // 将所有块合并到一个单独的 Uint8Array 中
+      let combined = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
+      let offset = 0;
+      for (let chunk of chunks) {
+        combined.set(chunk, offset);
+        offset += chunk.length;
+      }
+
+      // 使用 TextDecoder 将 Uint8Array 转换为字符串
+      const decoder = new TextDecoder();
+      return decoder.decode(combined);
+    }
+
+
+    function createReadableStream(text) {
+      const encoder = new TextEncoder();
+      const encodedText = encoder.encode(text);
+
+      const readableStream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(encodedText);
+          controller.close();
+        }
+      });
+
+      return readableStream;
+    }
+
     const isReadableStream = (obj) => {
       return obj instanceof ReadableStream
     }
@@ -284,6 +324,12 @@ let ajax_interceptor_qoweifjqon = {
       if (!data) {
         data = requestUrl
       }
+    }
+
+    let bodyData = data.body
+
+    if (bodyData && isReadableStream(data.body)) {
+      bodyData = await readReadableStream(bodyData)
     }
 
     const matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({
@@ -312,11 +358,12 @@ let ajax_interceptor_qoweifjqon = {
           }
           args[0] = ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data, 'payload');
         } else {
-          const dataer = await ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, data.body, 'payload');
-          if (isReadableStream(dataer)) {
+          const dataer = await ajax_interceptor_qoweifjqon.executeStringFunction(overridePayloadFunc, bodyData, 'payload');
+          if (isReadableStream(data.body)) {
+            const body = createReadableStream(dataer)
             // const [body1] = dataer.tee()
             args[0] = new Request(args[0], {
-              body: dataer,
+              body,
               duplex: 'half'
             });
           } else {
