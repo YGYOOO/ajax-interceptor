@@ -328,15 +328,14 @@ let ajax_interceptor_qoweifjqon = {
 
     let bodyData = data.body
 
-    if (bodyData && isReadableStream(data.body)) {
-      bodyData = await readReadableStream(bodyData)
-    }
-
     const matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({
       thisRequestUrl: ajax_interceptor_qoweifjqon.getCompleteUrl(inputUrl),
       thisMethod: data && data.method
     })
     if (matchedInterface && args) {
+      if (bodyData && isReadableStream(data.body)) {
+        bodyData = await readReadableStream(bodyData)
+      }
       const {
         overrideHeadersFunc,
         overridePayloadFunc,
@@ -372,7 +371,6 @@ let ajax_interceptor_qoweifjqon = {
         }
       }
     }
-
     return ajax_interceptor_qoweifjqon.originalFetch(...args).then(async (response) => {
       if (matchedInterface && (matchedInterface.overrideTxt || matchedInterface.overrideResponseFunc)) {
         window.dispatchEvent(new CustomEvent("pageScript", {
