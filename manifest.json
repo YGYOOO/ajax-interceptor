@@ -1,6 +1,6 @@
 {
   "name": "Ajax Modifier",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "To modify ajax responses on any page",
   "permissions": [
     "storage",
