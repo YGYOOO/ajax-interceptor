@@ -326,7 +326,7 @@ let ajax_interceptor_qoweifjqon = {
       }
     }
 
-    let bodyData = data.body
+    let bodyData = data?.body
 
     const matchedInterface = ajax_interceptor_qoweifjqon.getMatchedInterface({
       thisRequestUrl: ajax_interceptor_qoweifjqon.getCompleteUrl(inputUrl),
