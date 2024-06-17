@@ -480,6 +480,11 @@ window.addEventListener("message", function (event) {
   }
 
   if (ajax_interceptor_qoweifjqon.settings.ajaxInterceptor_switchOn) {
+    // https://github.com/YGYOOO/ajax-interceptor/issues/78
+    // https://github.com/YGYOOO/ajax-interceptor/issues/93
+    for (const k in ajax_tools_space.originalXHR) {
+      ajax_tools_space.myXHR[k] = ajax_tools_space.originalXHR[k]
+    }
     window.XMLHttpRequest = ajax_interceptor_qoweifjqon.myXHR
     window.fetch = ajax_interceptor_qoweifjqon.myFetch
   } else {
